@@ -88,7 +88,10 @@ Route::middleware([
 
     // Notifications
     Route::patch('notifications/{id}/read', function ($id) {
-        auth()->user()->notifications()->where('id', $id)->first()->markAsRead();
+        $notification = auth()->user()->notifications()->where('id', $id)->first();
+        if ($notification) {
+            $notification->markAsRead();
+        }
         return redirect()->back();
     })->name('notifications.read');
 

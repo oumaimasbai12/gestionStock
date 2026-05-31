@@ -2,15 +2,15 @@
     @section('title', 'Profil')
     <x-slot name="header">
         <div>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            <h2 class="page-title">
                 {{ __('Profile') }}
             </h2>
-            <p class="text-sm text-gray-500 mt-1">Gérez vos informations personnelles, votre mot de passe et la suppression de votre compte.</p>
+            <p class="page-subtitle">Gérez vos informations personnelles, votre mot de passe et la suppression de votre compte.</p>
         </div>
     </x-slot>
 
-    <div>
-        <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+    <div class="app-page">
+        <div class="app-container">
             @if (Laravel\Fortify\Features::canUpdateProfileInformation())
                 @livewire('profile.update-profile-information-form')
 

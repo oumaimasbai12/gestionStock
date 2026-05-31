@@ -13,6 +13,12 @@ export default {
 
     theme: {
         extend: {
+            colors: {
+                cream: '#EDE9E6',
+                accent: '#C9996B',
+                ink: '#5C4F4A',
+                sage: '#5C766D',
+            },
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },

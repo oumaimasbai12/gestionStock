@@ -26,7 +26,6 @@ class CheckNotifications extends Command
 
         $notified = 0;
 
-        // 1. Overdue invoices — pending unpaid/partial exits created > 7 days ago
         $overdueExits = StockExit::with('customer')
             ->whereNull('deleted_at')
             ->whereIn('payment_status', ['unpaid', 'partial'])
@@ -35,16 +34,23 @@ class CheckNotifications extends Command
 
         foreach ($overdueExits as $exit) {
             foreach ($admins as $admin) {
+                if ($this->hasUnreadNotification($admin, 'overdue_invoice', 'exit_id', $exit->id)) {
+                    continue;
+                }
+
                 $admin->notify(new OverdueInvoice($exit));
                 $notified++;
             }
         }
 
-        // 2. Critical stock — products where stock <= safety_stock
         $criticalProducts = Product::whereColumn('stock', '<=', 'safety_stock')->get();
 
         foreach ($criticalProducts as $product) {
             foreach ($admins as $admin) {
+                if ($this->hasUnreadNotification($admin, 'critical_stock', 'product_id', $product->id)) {
+                    continue;
+                }
+
                 $admin->notify(new CriticalStockAlert($product));
                 $notified++;
             }
@@ -52,5 +58,13 @@ class CheckNotifications extends Command
 
         $this->info($notified . ' notification(s) envoyée(s) à ' . $admins->count() . ' admin(s).');
         return 0;
+    }
+
+    private function hasUnreadNotification(User $admin, string $type, string $key, int $id): bool
+    {
+        return $admin->unreadNotifications()
+            ->where('data->type', $type)
+            ->where('data->'.$key, $id)
+            ->exists();
     }
 }
