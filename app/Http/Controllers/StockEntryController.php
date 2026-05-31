@@ -5,16 +5,40 @@ namespace App\Http\Controllers;
 use App\Models\StockEntry;
 use App\Models\Product;
 use App\Models\Supplier;
+use App\Models\Chantier;
 use Illuminate\Http\Request;
 
 class StockEntryController extends Controller
 {
     /**
+     * Set up auth checks.
+     */
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $user = auth()->user();
+            if (!$user || (!$user->hasRole('admin') && !$user->hasRole('storekeeper') && !$user->hasRole('site_manager'))) {
+                abort(403, 'Accès interdit.');
+            }
+            return $next($request);
+        });
+    }
+
+    /**
      * Display a listing of stock entries.
      */
     public function index()
     {
-        $entries = StockEntry::withoutTrashed()->paginate(10);
+        $user = auth()->user();
+        if ($user->hasRole('site_manager')) {
+            // Site Managers only see entries related to their assigned Chantier
+            $entries = StockEntry::withoutTrashed()
+                ->where('chantier_id', $user->chantier_id)
+                ->paginate(10);
+        } else {
+            // Admin & Storekeeper see all entries
+            $entries = StockEntry::withoutTrashed()->paginate(10);
+        }
         return view('entries.index', compact('entries'));
     }
 
@@ -25,7 +49,8 @@ class StockEntryController extends Controller
     {
         $products = Product::all();
         $suppliers = Supplier::all();
-        return view('entries.create', compact('products', 'suppliers'));
+        $chantiers = Chantier::all();
+        return view('entries.create', compact('products', 'suppliers', 'chantiers'));
     }
 
     /**
@@ -33,21 +58,36 @@ class StockEntryController extends Controller
      */
     public function store(Request $request)
     {
+        $user = auth()->user();
+
         $request->validate([
             'product_id'  => 'required|exists:products,id',
             'supplier_id' => 'required|exists:suppliers,id',
+            'chantier_id' => 'nullable|exists:chantiers,id',
             'quantity'    => 'required|integer|min:1',
             'document'    => 'nullable|string|max:255',
         ]);
+
+        $chantierId = $request->chantier_id;
+        if ($user->hasRole('site_manager')) {
+            // Force the entry to be assigned to the Site Manager's chantier
+            $chantierId = $user->chantier_id;
+        }
 
         // Increase the product's stock
         $product = Product::findOrFail($request->product_id);
         $product->stock += $request->quantity;
         $product->save();
 
-        StockEntry::create($request->only('product_id', 'supplier_id', 'quantity', 'document'));
+        StockEntry::create([
+            'product_id'  => $request->product_id,
+            'supplier_id' => $request->supplier_id,
+            'chantier_id' => $chantierId,
+            'quantity'    => $request->quantity,
+            'document'    => $request->document,
+        ]);
 
-        return redirect()->route('entries.index')->with('success', 'Stock entry created successfully.');
+        return redirect()->route('entries.index')->with('success', 'Bon d\'entrée de stock créé avec succès.');
     }
 
     /**
@@ -55,6 +95,11 @@ class StockEntryController extends Controller
      */
     public function show(StockEntry $stockEntry)
     {
+        $user = auth()->user();
+        if ($user->hasRole('site_manager') && $stockEntry->chantier_id !== $user->chantier_id) {
+            abort(403, 'Accès interdit.');
+        }
+
         return view('entries.show', compact('stockEntry'));
     }
 
@@ -63,9 +108,13 @@ class StockEntryController extends Controller
      */
     public function destroy(StockEntry $stockEntry)
     {
-        // Optionally, you could revert the stock increase here if needed.
+        $user = auth()->user();
+        if ($user->hasRole('site_manager')) {
+            abort(403, 'Action non autorisée pour votre rôle.');
+        }
+
         $stockEntry->delete();
-        return redirect()->route('entries.index')->with('success', 'Stock entry deleted successfully.');
+        return redirect()->route('entries.index')->with('success', 'Bon d\'entrée archivé avec succès.');
     }
 
     /**
@@ -73,6 +122,11 @@ class StockEntryController extends Controller
      */
     public function trash()
     {
+        $user = auth()->user();
+        if ($user->hasRole('site_manager')) {
+            abort(403, 'Action non autorisée pour votre rôle.');
+        }
+
         $entries = StockEntry::onlyTrashed()->paginate(10);
         return view('entries.trash', compact('entries'));
     }
@@ -82,8 +136,13 @@ class StockEntryController extends Controller
      */
     public function restore($id)
     {
+        $user = auth()->user();
+        if ($user->hasRole('site_manager')) {
+            abort(403, 'Action non autorisée pour votre rôle.');
+        }
+
         StockEntry::withTrashed()->findOrFail($id)->restore();
-        return redirect()->route('entries.index')->with('success', 'Stock entry restored successfully.');
+        return redirect()->route('entries.index')->with('success', 'Bon d\'entrée restauré avec succès.');
     }
 
     /**
@@ -91,7 +150,12 @@ class StockEntryController extends Controller
      */
     public function forceDelete($id)
     {
+        $user = auth()->user();
+        if ($user->hasRole('site_manager')) {
+            abort(403, 'Action non autorisée pour votre rôle.');
+        }
+
         StockEntry::withTrashed()->findOrFail($id)->forceDelete();
-        return redirect()->route('entries.index')->with('success', 'Stock entry permanently deleted.');
+        return redirect()->route('entries.index')->with('success', 'Bon d\'entrée supprimé définitivement.');
     }
 }

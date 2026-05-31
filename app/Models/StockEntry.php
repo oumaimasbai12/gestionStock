@@ -13,6 +13,7 @@ class StockEntry extends Model
     protected $fillable = [
         'product_id',
         'supplier_id',
+        'chantier_id',
         'quantity',
         'document',
     ];
@@ -25,6 +26,11 @@ class StockEntry extends Model
     public function supplier()
     {
         return $this->belongsTo(\App\Models\Supplier::class)->withTrashed();
+    }
+
+    public function chantier()
+    {
+        return $this->belongsTo(\App\Models\Chantier::class)->withTrashed();
     }
 
 }

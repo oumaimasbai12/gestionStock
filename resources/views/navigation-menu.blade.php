@@ -12,27 +12,46 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-                        {{ __('Tableau de Bord') }}
-                    </x-nav-link>
-                    <x-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')">
-                        {{ __('Utilisateurs') }}
-                    </x-nav-link>
-                    <x-nav-link href="{{ route('customers.index') }}" :active="request()->routeIs('customers.index')">
-                        {{ __('Clients') }}
-                    </x-nav-link>
-                    <x-nav-link href="{{ route('products.index') }}" :active="request()->routeIs('products.index')">
-                        {{ __('Produits BTP') }}
-                    </x-nav-link>
-                    <x-nav-link href="{{ route('suppliers.index') }}" :active="request()->routeIs('suppliers.index')">
-                        {{ __('Fournisseurs') }}
-                    </x-nav-link>
-                    <x-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
-                        {{ __('Entrées Stock') }}
-                    </x-nav-link>
-                    <x-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.index')">
-                        {{ __('Sorties Stock') }}
-                    </x-nav-link>
+                    @if(auth()->user()->hasRole('admin'))
+                        <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+                            {{ __('Tableau de Bord') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')">
+                            {{ __('Utilisateurs') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('customers.index') }}" :active="request()->routeIs('customers.index')">
+                            {{ __('Clients') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('products.index') }}" :active="request()->routeIs('products.index')">
+                            {{ __('Produits BTP') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('suppliers.index') }}" :active="request()->routeIs('suppliers.index')">
+                            {{ __('Fournisseurs') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
+                            {{ __('Entrées Stock') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.index')">
+                            {{ __('Sorties Stock') }}
+                        </x-nav-link>
+                    @elseif(auth()->user()->hasRole('storekeeper'))
+                        <x-nav-link href="{{ route('products.index') }}" :active="request()->routeIs('products.index')">
+                            {{ __('Produits BTP') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
+                            {{ __('Entrées Stock') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.index')">
+                            {{ __('Sorties Stock') }}
+                        </x-nav-link>
+                    @elseif(auth()->user()->hasRole('site_manager'))
+                        <x-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
+                            {{ __('Entrées Stock') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.index')">
+                            {{ __('Sorties Stock') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -157,27 +176,46 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-                {{ __('Tableau de Bord') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')">
-                {{ __('Utilisateurs') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('customers.index') }}" :active="request()->routeIs('customers.index')">
-                {{ __('Clients') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('products.index') }}" :active="request()->routeIs('products.index')">
-                {{ __('Produits BTP') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('suppliers.index') }}" :active="request()->routeIs('suppliers.index')">
-                {{ __('Fournisseurs') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
-                {{ __('Entrées Stock') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.index')">
-                {{ __('Sorties Stock') }}
-            </x-responsive-nav-link>
+            @if(auth()->user()->hasRole('admin'))
+                <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+                    {{ __('Tableau de Bord') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')">
+                    {{ __('Utilisateurs') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('customers.index') }}" :active="request()->routeIs('customers.index')">
+                    {{ __('Clients') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('products.index') }}" :active="request()->routeIs('products.index')">
+                    {{ __('Produits BTP') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('suppliers.index') }}" :active="request()->routeIs('suppliers.index')">
+                    {{ __('Fournisseurs') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
+                    {{ __('Entrées Stock') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.index')">
+                    {{ __('Sorties Stock') }}
+                </x-responsive-nav-link>
+            @elseif(auth()->user()->hasRole('storekeeper'))
+                <x-responsive-nav-link href="{{ route('products.index') }}" :active="request()->routeIs('products.index')">
+                    {{ __('Produits BTP') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
+                    {{ __('Entrées Stock') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.index')">
+                    {{ __('Sorties Stock') }}
+                </x-responsive-nav-link>
+            @elseif(auth()->user()->hasRole('site_manager'))
+                <x-responsive-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
+                    {{ __('Entrées Stock') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.index')">
+                    {{ __('Sorties Stock') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

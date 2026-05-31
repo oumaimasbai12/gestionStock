@@ -1,149 +1,262 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tableau de Bord - Stocket BI Premium') }}
-        </h2>
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    {{ __('Tableau de Bord BI') }}
+                </h2>
+                <p class="text-xs text-gray-400 mt-1 uppercase tracking-wider font-semibold">
+                    Distribution BTP - {{ now()->format('d/m/Y à H:i') }}
+                </p>
+            </div>
+            
+            <!-- Export Button -->
+            <button onclick="exportBIReport()" class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-sm transition space-x-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <span>Exporter Rapport BI</span>
+            </button>
+        </div>
     </x-slot>
 
-    <div class="py-12 bg-gray-50">
+    @php
+    function formatKmAD($val) {
+        if ($val >= 1000) {
+            return number_format($val / 1000, 1, ',', ' ') . ' k MAD';
+        }
+        return number_format($val, 0, ',', ' ') . ' MAD';
+    }
+    @endphp
+
+    <div class="py-8 bg-gray-50/50">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
 
+            <!-- KPI Cards Grid -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center space-x-4">
-                    <div class="p-3 bg-green-100 text-green-600 rounded-lg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <!-- VALEUR DU STOCK -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100/80">
+                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider block">Valeur du Stock</span>
+                    <div class="text-2xl font-black text-gray-900 mt-2">
+                        {{ number_format($totalInventoryValue, 0, ',', ' ') }} <span class="text-sm font-bold text-gray-500">MAD</span>
                     </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-400 uppercase tracking-wider">Valeur Financière du Stock</p>
-                        <p class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($totalInventoryValue, 2, ',', ' ') }} DH</p>
-                    </div>
+                    <span class="text-xs text-gray-400 font-medium mt-1 block">Stock valorisé au prix d'achat</span>
                 </div>
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center space-x-4">
-                    <div class="p-3 bg-blue-100 text-blue-600 rounded-lg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 11m8 4V3m-8 8v10l8 4"></path></svg>
+                <!-- SOLDE IMPAYÉ -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100/80">
+                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider block">Solde Impayé</span>
+                    <div class="text-2xl font-black text-red-500 mt-2">
+                        {{ number_format($unpaidBalance, 0, ',', ' ') }} <span class="text-sm font-bold text-red-400">MAD</span>
                     </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-400 uppercase tracking-wider">Total Produits BTP</p>
-                        <p class="text-2xl font-bold text-gray-900 mt-1">{{ $totalProductos }}</p>
-                    </div>
+                    <span class="text-xs text-gray-400 font-medium mt-1 block">Factures impayées + partielles</span>
                 </div>
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center space-x-4">
-                    <div class="p-3 bg-yellow-100 text-yellow-600 rounded-lg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-16 0h3m0 0h5m0 0v-7a1 1 0 011-1h2a1 1 0 011 1v7m-7 0h4"></path></svg>
+                <!-- VENTES DU MOIS -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100/80">
+                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider block">Ventes du Mois</span>
+                    <div class="text-2xl font-black text-gray-900 mt-2">
+                        {{ number_format($monthlySales, 0, ',', ' ') }} <span class="text-sm font-bold text-gray-500">MAD</span>
                     </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-400 uppercase tracking-wider">Chantiers Actifs</p>
-                        <p class="text-2xl font-bold text-gray-900 mt-1">{{ $chantierConsumption->count() }}</p>
-                    </div>
+                    <span class="text-xs text-emerald-500 font-bold mt-1 inline-flex items-center">
+                        <svg class="w-3.5 h-3.5 mr-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                        0% vs mois précédent
+                    </span>
                 </div>
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center space-x-4">
-                    <div class="p-3 bg-purple-100 text-purple-600 rounded-lg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                <!-- ALERTES STOCK -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100/80">
+                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider block">Alertes Stock</span>
+                    <div class="text-2xl font-black text-amber-500 mt-2">
+                        {{ $stockAlerts }} <span class="text-sm font-bold text-amber-400">produits</span>
                     </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-400 uppercase tracking-wider">Fournisseurs</p>
-                        <p class="text-2xl font-bold text-gray-900 mt-1">{{ $totalProveedores }}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">🏗️ Budget Consommé par Chantier (DH)</h3>
-                    <div class="relative h-64">
-                        <canvas id="chantierChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">📊 Répartition du Stock par Catégorie</h3>
-                    <div class="relative h-64flex justify-center">
-                        <canvas id="categoryChart" style="max-height: 250px;"></canvas>
-                    </div>
+                    <span class="text-xs text-emerald-500 font-bold mt-1 block">{{ $healthyPercentage }}% du stock en bonne santé</span>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">📈 Mouvements de Stock (7 Derniers Jours)</h3>
-                <div class="relative h-72">
-                    <canvas id="mouvementsChart"></canvas>
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Consommation par Chantier (Left 2 cols) -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100/80 lg:col-span-2">
+                    <div class="border-b border-gray-50 pb-4 mb-4">
+                        <h3 class="text-base font-bold text-gray-800">Consommation par Chantier</h3>
+                        <p class="text-xs text-gray-400 font-medium">Top 5 chantiers - valeur des ventes (MAD)</p>
+                    </div>
+                    
+                    <div class="space-y-5 mt-6">
+                        @forelse($chantierConsumption as $chantier)
+                            @php
+                                $maxSpent = $chantierConsumption->first()->total_spent ?? 1;
+                                $percentage = $maxSpent > 0 ? ($chantier->total_spent / $maxSpent) * 100 : 0;
+                            @endphp
+                            <div class="flex items-center">
+                                <span class="w-48 text-xs font-semibold text-gray-600 truncate">{{ $chantier->chantier_name }}</span>
+                                <div class="flex-1 ml-4">
+                                    <div class="w-full bg-gray-50 rounded-full h-8 overflow-hidden relative border border-gray-100/60">
+                                        <div class="h-full rounded-full transition-all duration-700 flex items-center justify-end pr-3 text-[11px] font-black text-white shadow-sm
+                                            @if($loop->index == 0) bg-blue-500
+                                            @elseif($loop->index == 1) bg-emerald-500
+                                            @elseif($loop->index == 2) bg-amber-500
+                                            @elseif($loop->index == 3) bg-purple-500
+                                            @else bg-gray-500
+                                            @endif"
+                                            style="width: {{ max($percentage, 10) }}%">
+                                            {{ formatKmAD($chantier->total_spent) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center py-8 text-gray-400 text-sm">
+                                Aucun chantier enregistré.
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- CA par Segment (Right 1 col) -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100/80 flex flex-col justify-between">
+                    <div class="border-b border-gray-50 pb-4 mb-4">
+                        <h3 class="text-base font-bold text-gray-800">CA par Segment</h3>
+                        <p class="text-xs text-gray-400 font-medium">Répartition du chiffre d'affaires</p>
+                    </div>
+                    
+                    <div class="relative flex justify-center items-center py-4">
+                        <!-- Canvas for Donut Chart -->
+                        <canvas id="categoryChart" class="max-w-[200px] max-h-[200px]"></canvas>
+                    </div>
+                    
+                    <!-- Chart Legend -->
+                    <div class="grid grid-cols-3 gap-2 mt-4 text-[10px] text-gray-500 font-bold border-t border-gray-50 pt-4">
+                        @foreach($categoryDistribution as $dist)
+                            <div class="text-center truncate" title="{{ $dist->category_name }}">
+                                <span class="inline-block w-2.5 h-2.5 rounded-full mr-1 
+                                    @if($loop->index == 0) bg-[#3B82F6]
+                                    @elseif($loop->index == 1) bg-[#10B981]
+                                    @else bg-[#F59E0B]
+                                    @endif"></span>
+                                <span>{{ $dist->category_name }}</span>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
 
         </div>
     </div>
 
+    <!-- ChartJS and Plugin Script -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Data passée depuis le DashboardController safely
-            const chantiersData = @json($chantierConsumption->pluck('chantier_name'));
-            const budgetData = @json($chantierConsumption->pluck('total_spent'));
-
             const categoriesData = @json($categoryDistribution->pluck('category_name'));
             const valeursData = @json($categoryDistribution->pluck('value'));
 
-            const datesFlux = @json($fechasGrafico);
-            const entreesFlux = @json($entradasGrafico);
-            const sortiesFlux = @json($salidasGrafico);
+            // Calculate total CA
+            const totalCA = valeursData.reduce((a, b) => parseFloat(a) + parseFloat(b), 0);
+            
+            // Format CA to 'k MAD'
+            let caText = '';
+            if (totalCA >= 1000) {
+                caText = (totalCA / 1000).toFixed(1).replace('.', ',') + ' k';
+            } else {
+                caText = totalCA.toFixed(0);
+            }
 
-            // 1. Chart Chantiers (Bar)
-            new Chart(document.getElementById('chantierChart'), {
-                type: 'bar',
-                data: {
-                    labels: chantiersData.length ? chantiersData : ['Aucun chantier'],
-                    datasets: [{
-                        label: 'Budget Consommé (DH)',
-                        data: budgetData.length ? budgetData : [0],
-                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                        borderRadius: 6
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+            // Custom Plugin for Center Text
+            const centerTextPlugin = {
+                id: 'centerText',
+                afterDraw(chart) {
+                    const { ctx, chartArea: { top, bottom, left, right, width, height } } = chart;
+                    ctx.save();
+                    
+                    // "CA Total" Label
+                    ctx.font = '600 11px Inter, sans-serif';
+                    ctx.fillStyle = '#9CA3AF';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('CA Total', left + width / 2, top + height / 2 - 10);
+                    
+                    // Big Number (e.g. "287,5 k MAD")
+                    ctx.font = '800 16px Inter, sans-serif';
+                    ctx.fillStyle = '#111827';
+                    ctx.fillText(caText + ' MAD', left + width / 2, top + height / 2 + 10);
+                    
+                    ctx.restore();
+                }
+            };
 
-            // 2. Chart Catégories (Doughnut)
+            // Donut Chart Init
             new Chart(document.getElementById('categoryChart'), {
                 type: 'doughnut',
                 data: {
-                    labels: categoriesData.length ? categoriesData : ['Aucune catégorie'],
+                    labels: categoriesData,
                     datasets: [{
-                        data: valeursData.length ? valeursData : [1],
-                        backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899']
+                        data: valeursData,
+                        backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff',
+                        hoverOffset: 4
                     }]
                 },
-                options: { responsive: true }
-            });
-
-            // 3. Chart Flux de Stock (Line)
-            new Chart(document.getElementById('mouvementsChart'), {
-                type: 'line',
-                data: {
-                    labels: datesFlux,
-                    datasets: [
-                        {
-                            label: 'Entrées',
-                            data: entreesFlux,
-                            borderColor: '#10B981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            fill: true,
-                            tension: 0.3
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '72%',
+                    plugins: {
+                        legend: {
+                            display: false
                         },
-                        {
-                            label: 'Sorties',
-                            data: sortiesFlux,
-                            borderColor: '#EF4444',
-                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                            fill: true,
-                            tension: 0.3
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = parseFloat(context.raw);
+                                    const percentage = totalCA > 0 ? ((value / totalCA) * 100).toFixed(1) : 0;
+                                    return ` ${context.label}: ${percentage}% (${value.toLocaleString('fr-FR')} MAD)`;
+                                }
+                            }
                         }
-                    ]
+                    }
                 },
-                options: { responsive: true, maintainAspectRatio: false }
+                plugins: [centerTextPlugin]
             });
         });
+
+        // CSV BI Exporter
+        function exportBIReport() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Tableau de Bord BI - Stocket Premium\n";
+            csvContent += "Date d'exportation: " + new Date().toLocaleString() + "\n\n";
+            
+            // KPIs Section
+            csvContent += "METRIQUE;VALEUR;DETAILS\n";
+            csvContent += "Valeur du Stock;" + "{{ $totalInventoryValue }}" + " MAD;Valorise au prix d'achat\n";
+            csvContent += "Solde Impaye;" + "{{ $unpaidBalance }}" + " MAD;Factures impayees ou partielles\n";
+            csvContent += "Ventes du Mois;" + "{{ $monthlySales }}" + " MAD;Chiffre d'affaires de la periode\n";
+            csvContent += "Alertes Stock;" + "{{ $stockAlerts }}" + " produits;Produits sous le seuil d'alerte\n\n";
+
+            // Chantiers Section
+            csvContent += "CONSOMMATION PAR CHANTIER\n";
+            csvContent += "Chantier;Valeur des ventes (MAD)\n";
+            @foreach($chantierConsumption as $chantier)
+                csvContent += "{{ $chantier->chantier_name }};{{ $chantier->total_spent }}\n";
+            @endforeach
+            csvContent += "\n";
+
+            // Segment Section
+            csvContent += "CHIFFRE D'AFFAIRES PAR SEGMENT\n";
+            csvContent += "Categorie;Ventes (MAD)\n";
+            @foreach($categoryDistribution as $dist)
+                csvContent += "{{ $dist->category_name }};{{ $dist->value }}\n";
+            @endforeach
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Rapport_BI_Stocket_" + new Date().toISOString().slice(0,10) + ".csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     </script>
 </x-app-layout>

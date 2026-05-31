@@ -8,6 +8,19 @@ use Illuminate\Http\Request;
 class SupplierController extends Controller
 {
     /**
+     * Set up auth checks.
+     */
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (!auth()->user() || !auth()->user()->hasRole('admin')) {
+                abort(403, 'Accès réservé aux administrateurs.');
+            }
+            return $next($request);
+        });
+    }
+
+    /**
      * Display a listing of the suppliers.
      */
     public function index()

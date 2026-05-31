@@ -1,72 +1,106 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800">
-            {{ __('Crear Entrada') }}
-        </h2>
+        <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Créer un Bon d\'Entrée de Stock') }}
+            </h2>
+            <a href="{{ route('entries.index') }}" class="inline-flex items-center bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium transition">
+                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                <span>Retour aux entrées</span>
+            </a>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Main container -->
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="p-6">
-                    <form action="{{ route('entries.store') }}" method="POST">
-                        @csrf
-                        <div class="mb-4">
-                            <label for="product_id" class="block font-medium text-sm text-gray-700">{{ __('Producto') }}</label>
-                            <select name="product_id" id="product_id" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400">
-                                <option value="">{{ __('Selecciona un producto') }}</option>
+    <div class="py-12 bg-gray-50/50">
+        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden p-8">
+                <form action="{{ route('entries.store') }}" method="POST">
+                    @csrf
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <!-- Produit BTP -->
+                        <div class="md:col-span-2">
+                            <label for="product_id" class="block text-sm font-semibold text-gray-700 mb-1">Produit BTP</label>
+                            <select name="product_id" id="product_id" required class="mt-1 block w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                <option value="" disabled selected>Sélectionner un produit</option>
                                 @foreach($products as $product)
-                                <option value="{{ $product->id }}" {{ old('product_id') == $product->id ? 'selected' : '' }}>
-                                {{ $product->name }} ({{ $product->stock }})
-                                </option>
+                                    <option value="{{ $product->id }}" {{ old('product_id') == $product->id ? 'selected' : '' }}>
+                                        {{ $product->name }} (Stock actuel: {{ $product->stock }})
+                                    </option>
                                 @endforeach
                             </select>
                             @error('product_id')
-                            <span class="text-red-500 text-xs">{{ $message }}</span>
+                                <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span>
                             @enderror
                         </div>
-                        <div class="mb-4">
-                            <label for="supplier_id" class="block font-medium text-sm text-gray-700">{{ __('Proveedor') }}</label>
-                            <select name="supplier_id" id="supplier_id" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400">
-                                <option value="">{{ __('Select a supplier') }}</option>
+
+                        <!-- Fournisseur -->
+                        <div>
+                            <label for="supplier_id" class="block text-sm font-semibold text-gray-700 mb-1">Fournisseur</label>
+                            <select name="supplier_id" id="supplier_id" required class="mt-1 block w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                <option value="" disabled selected>Sélectionner un fournisseur</option>
                                 @foreach($suppliers as $supplier)
-                                <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>
-                                {{ $supplier->name }}
-                                </option>
+                                    <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>
+                                        🏢 {{ $supplier->name }}
+                                    </option>
                                 @endforeach
                             </select>
                             @error('supplier_id')
-                            <span class="text-red-500 text-xs">{{ $message }}</span>
+                                <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span>
                             @enderror
                         </div>
-                        <div class="mb-4">
-                            <label for="quantity" class="block font-medium text-sm text-gray-700">{{ __('Cantidad') }}</label>
-                            <input type="number" name="quantity" id="quantity" value="{{ old('quantity') }}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400">
+
+                        <!-- Chantier (Only for admin/storekeeper) -->
+                        <div>
+                            @if(auth()->user()->hasRole('site_manager'))
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Chantier d'Affectation</label>
+                                <input type="text" disabled value="🏗️ {{ optional(auth()->user()->chantier)->name }}" class="mt-1 block w-full border-gray-300 rounded-xl shadow-sm bg-gray-50 text-gray-500 transition duration-150 font-bold">
+                                <input type="hidden" name="chantier_id" value="{{ auth()->user()->chantier_id }}">
+                            @else
+                                <label for="chantier_id" class="block text-sm font-semibold text-gray-700 mb-1">Chantier d'Affectation (Optionnel)</label>
+                                <select name="chantier_id" id="chantier_id" class="mt-1 block w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    <option value="" selected>Dépôt central (Global)</option>
+                                    @foreach($chantiers as $chantier)
+                                        <option value="{{ $chantier->id }}" {{ old('chantier_id') == $chantier->id ? 'selected' : '' }}>
+                                            🏗️ {{ $chantier->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @endif
+                            @error('chantier_id')
+                                <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Quantité Reçue -->
+                        <div>
+                            <label for="quantity" class="block text-sm font-semibold text-gray-700 mb-1">Quantité Reçue</label>
+                            <input type="number" name="quantity" id="quantity" min="1" required value="{{ old('quantity') }}" class="mt-1 block w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150">
                             @error('quantity')
-                            <span class="text-red-500 text-xs">{{ $message }}</span>
+                                <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span>
                             @enderror
                         </div>
-                        <div class="mb-4">
-                            <label for="document" class="block font-medium text-sm text-gray-700">{{ __('Documento') }}</label>
-                            <input type="text" name="document" id="document" value="{{ old('document') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-blue-400">
+
+                        <!-- Réf. Document -->
+                        <div>
+                            <label for="document" class="block text-sm font-semibold text-gray-700 mb-1">Référence Document (ex: Bon de Livraison / BL)</label>
+                            <input type="text" name="document" id="document" required value="{{ old('document', 'BL-ENT-' . strtoupper(Str::random(6))) }}" class="mt-1 block w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150">
                             @error('document')
-                            <span class="text-red-500 text-xs">{{ $message }}</span>
+                                <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span>
                             @enderror
                         </div>
-                        <div class="flex justify-end">
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-md font-semibold hover:bg-blue-600 focus:outline-none">
-                                <!-- Check icon -->
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V7l-4-4zM7 17h10M7 13h10M7 9h4m6 8v-8a2 2 0 00-2-2H7" />
-                                </svg>
-                                {{ __('Save') }}
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 border-t border-gray-100 pt-6">
+                        <a href="{{ route('entries.index') }}" class="inline-flex items-center px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl text-sm transition">
+                            Annuler
+                        </a>
+                        <button type="submit" class="inline-flex items-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-sm shadow-sm transition">
+                            Enregistrer l'entrée
+                        </button>
+                    </div>
+                </form>
             </div>
-            <!-- End main container -->
         </div>
     </div>
 </x-app-layout>

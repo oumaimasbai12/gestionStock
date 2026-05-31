@@ -9,6 +9,19 @@ use Illuminate\Support\Facades\DB;
 class ProductController extends Controller
 {
     /**
+     * Set up auth checks.
+     */
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (!auth()->user() || (!auth()->user()->hasRole('admin') && !auth()->user()->hasRole('storekeeper'))) {
+                abort(403, 'Accès interdit.');
+            }
+            return $next($request);
+        });
+    }
+
+    /**
      * Display a listing of the products (excluding soft-deleted ones).
      */
     public function index()

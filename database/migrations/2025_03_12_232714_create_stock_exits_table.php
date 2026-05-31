@@ -15,7 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->foreignId('customer_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('chantier_id')->nullable()->constrained()->onDelete('set null');
             $table->integer('quantity');
+            $table->decimal('unit_price', 10, 2)->default(0.00);
+            $table->decimal('paid_amount', 10, 2)->default(0.00);
+            $table->string('payment_status')->default('unpaid'); // paid, partial, unpaid
             $table->string('document')->nullable();
             $table->timestamps();
             $table->softDeletes();

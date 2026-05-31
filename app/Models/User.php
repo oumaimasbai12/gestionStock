@@ -31,6 +31,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'chantier_id',
     ];
 
     /**
@@ -62,4 +63,9 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function chantier()
+    {
+        return $this->belongsTo(\App\Models\Chantier::class);
+    }
 }

@@ -13,7 +13,11 @@ class StockExit extends Model
     protected $fillable = [
         'product_id',
         'customer_id',
+        'chantier_id',
         'quantity',
+        'unit_price',
+        'paid_amount',
+        'payment_status',
         'document',
     ];
 
@@ -27,4 +31,8 @@ class StockExit extends Model
         return $this->belongsTo(\App\Models\Customer::class)->withTrashed();
     }
 
+    public function chantier()
+    {
+        return $this->belongsTo(\App\Models\Chantier::class);
+    }
 }
