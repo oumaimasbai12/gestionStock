@@ -1,0 +1,42 @@
+name;brand;category;unit;purchase_price;stock;min_stock_level;description
+Ciment CPJ 45;Lafarge Holcim;Liants Hydrauliques;Sac 50kg;68.00;500;300;Ciment Portland composé standard BTP
+Ciment CPJ 35;Ciments du Maroc;Liants Hydrauliques;Sac 50kg;64.00;800;250;Ciment usage général
+Ciment Blanc;Holcim;Liants Hydrauliques;Sac 25kg;88.00;40;100;Ciment blanc finition
+Fer à béton HA8;Maghreb Steel;Acier & Ferraillage;Tonne;6500.00;18;8;Armature béton armé diamètre 8mm
+Fer à béton HA10;Maghreb Steel;Acier & Ferraillage;Tonne;6480.00;25;8;Armature béton armé diamètre 10mm
+Fer à béton HA12;Sonasid;Acier & Ferraillage;Tonne;6450.00;35;10;Armature béton armé diamètre 12mm
+Fer à béton HA16;Sonasid;Acier & Ferraillage;Tonne;6420.00;8;8;Armature béton armé diamètre 16mm
+Treillis soudé ST25;Maghreb Steel;Acier & Ferraillage;Panneau 2x3m;380.00;90;30;Treillis soudé pour dalles
+Sable de carrière 0/4;Carrières du Maroc;Granulats & Sables;m³;140.00;200;60;Sable pour mortier et enduit
+Sable fin 0/2;Carrières du Maroc;Granulats & Sables;m³;155.00;120;40;Sable fin pour jointoiement
+Gravier concassé 8/15;Carrières du Maroc;Granulats & Sables;m³;165.00;150;50;Granulat pour béton
+Tout-venant 0/31.5;Carrières du Maroc;Granulats & Sables;m³;120.00;300;80;Remblai et sous-couche
+Brique rouge T8;Briqueterie du Sud;Maçonnerie & Blocs;Unité;2.20;40000;10000;Brique terre cuite standard
+Brique creuse 12 trous;Briqueterie du Sud;Maçonnerie & Blocs;Unité;2.90;28000;8000;Brique creuse cloison
+Parpaing creux 20cm;CMC Béton;Maçonnerie & Blocs;Unité;7.80;5000;1000;Bloc béton creux 20x20x40
+Parpaing plein 15cm;CMC Béton;Maçonnerie & Blocs;Unité;8.50;1800;500;Bloc béton plein 15x20x40
+Peinture vinylique blanc;Astral;Peintures & Enduits;Seau 15L;255.00;60;20;Peinture intérieure lavable
+Peinture façade gris;Astral;Peintures & Enduits;Seau 15L;280.00;35;15;Peinture extérieure résistante
+Enduit de rebouchage;Bostik;Peintures & Enduits;Sac 5kg;58.00;120;40;Enduit de lissage et rebouchage
+Sous-couche universelle;Astral;Peintures & Enduits;Bidon 5L;120.00;45;15;Primaire d'accrochage
+Membrane bitumineuse 40;IKO;Étanchéité;Rouleau 10m²;340.00;20;12;Étanchéité toiture terrasse
+Chape d'étanchéité;Mapei;Étanchéité;Bidon 20L;410.00;12;8;Revêtement étanche salles humides
+Géotextile 200g;TechnoFib;Étanchéité;Rouleau 50m;620.00;8;5;Géotextile drainage et filtration
+Tube PVC PN10 Ø110;CMCP;Plomberie & Sanitaire;Barre 6m;88.00;80;45;Tuyau évacuation eaux usées
+Tube PVC PN10 Ø63;CMCP;Plomberie & Sanitaire;Barre 6m;55.00;120;40;Tuyau alimentation eau froide
+Tube galva Ø50;CMCP;Plomberie & Sanitaire;Barre 6m;170.00;6;20;Tube acier galvanisé
+Coude PVC 90° Ø110;CMCP;Plomberie & Sanitaire;Pièce;12.00;280;80;Coude évacuation
+Câble NYY 3x2.5mm²;Nexans Maroc;Électricité;ml;16.00;800;200;Câble installation électrique
+Câble NYY 3x4mm²;Nexans Maroc;Électricité;ml;22.00;400;120;Câble forte puissance
+Disjoncteur 16A;Schneider;Électricité;Pièce;45.00;80;30;Disjoncteur modulaire
+Perceuse percussion 800W;Bosch;Outillage;Pièce;680.00;2;3;Perceuse à percussion professionnelle
+Meuleuse 125mm 900W;Bosch;Outillage;Pièce;520.00;3;2;Meuleuse angulaire
+Bétonnière 140L;Altrad;Outillage;Pièce;2800.00;1;1;Bétonnière électrique chantier
+Plaque de plâtre BA13;Siniat;Cloisons & Plafonds;m²;38.00;500;150;Plaque standard cloisons sèches
+Profilé en U 48;Knauf;Cloisons & Plafonds;ml;12.00;240;70;Rail acier galvanisé
+Isolant laine roche 100mm;Rockwool;Isolation;m²;85.00;280;80;Isolation thermique et acoustique
+Câble R2V 3G1.5;Nexans;Électricité;Couronne 100m;85.00;50;10;Câble rigide pour installation fixe domestique
+Disjoncteur 16A;Schneider Electric;Électricité;Unité;12.50;200;50;Disjoncteur magnéto-thermique phase + neutre
+Interrupteur Va-et-vient;Legrand;Électricité;Unité;8.90;150;30;Interrupteur gamme Céliane blanc standard
+Projecteur LED 50W;Philips;Électricité;Unité;45.00;25;5;Projecteur extérieur IP65 étanche haute luminosité
+Gaine ICTA Ø20;Courant;Électricité;Couronne 50m;35.00;80;20;Gaine isolante cintrable pour passage de câbles
