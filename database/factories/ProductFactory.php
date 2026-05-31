@@ -16,9 +16,12 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
+        $categories = ['Liants Hydrauliques', 'Acier & Ferraillage', 'Granulats & Sables', 'Maçonnerie & Blocs', 'Peintures & Enduits', 'Électricité', 'Outillage'];
         return [
-            'name' => $this->faker->word(),
-            'stock' => $this->faker->numberBetween(0, 100), // Stock entre 0 y 100
+            'name' => $this->faker->words(3, true),
+            'category' => $this->faker->randomElement($categories),
+            'purchase_price' => $this->faker->randomFloat(2, 5, 500),
+            'stock' => $this->faker->numberBetween(0, 100),
             'description' => $this->faker->sentence(),
             'created_at' => now(),
             'updated_at' => now(),

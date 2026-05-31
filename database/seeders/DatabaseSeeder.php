@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -34,8 +35,8 @@ class DatabaseSeeder extends Seeder
         }
 
         $admin = new User();
-        $admin->name = 'Carlos Torres';
-        $admin->email = 'cawtoz.dev@gmail.com';
+        $admin->name = 'Stocket Admin';
+        $admin->email = 'admin@stocket.com';
         $admin->password = bcrypt('12345678');
         $admin->assignRole($roleAdmin);
         $roleAdmin->givePermissionTo($permissions);
@@ -65,22 +66,49 @@ class DatabaseSeeder extends Seeder
             Supplier::create($data);
         }
 
-        // Crear productos manualmente
+        // Créer les produits BTP manuellement
         $products = [
-            ['name' => 'Mouse Gamer RGB', 'stock' => 20, 'description' => 'Mouse gamer con luces RGB y sensor de alta precisión.'],
-            ['name' => 'Teclado Mecánico', 'stock' => 15, 'description' => 'Teclado mecánico con switches rojos y retroiluminación RGB.'],
-            ['name' => 'Monitor 27" 144Hz', 'stock' => 10, 'description' => 'Monitor de 27 pulgadas con resolución 2K y tasa de refresco de 144Hz.'],
-            ['name' => 'Tarjeta Gráfica RTX 3060', 'stock' => 5, 'description' => 'Tarjeta gráfica NVIDIA RTX 3060 con 12GB de VRAM.'],
-            ['name' => 'SSD NVMe 1TB', 'stock' => 25, 'description' => 'Unidad SSD NVMe de 1TB con velocidad de lectura de 3500MB/s.'],
-            ['name' => 'Procesador Ryzen 7', 'stock' => 12, 'description' => 'Procesador AMD Ryzen 7 5800X con 8 núcleos y 16 hilos.'],
-            ['name' => 'Memoria RAM 16GB DDR4', 'stock' => 30, 'description' => 'Kit de memoria RAM DDR4 de 16GB a 3200MHz.'],
-            ['name' => 'Fuente de Poder 750W', 'stock' => 8, 'description' => 'Fuente de poder certificada 80 Plus Gold de 750W.'],
-            ['name' => 'Gabinete Gaming RGB', 'stock' => 10, 'description' => 'Gabinete para PC con panel lateral de vidrio templado y ventiladores RGB.'],
-            ['name' => 'Silla Ergonómica para PC', 'stock' => 7, 'description' => 'Silla ergonómica con soporte lumbar y reclinación ajustable.'],
+            ['name' => 'Ciment CPJ 45', 'category' => 'Liants Hydrauliques', 'purchase_price' => 68.00, 'stock' => 500, 'description' => 'Ciment Portland composé standard BTP'],
+            ['name' => 'Fer à béton HA8', 'category' => 'Acier & Ferraillage', 'purchase_price' => 6500.00, 'stock' => 18, 'description' => 'Armature béton armé diamètre 8mm'],
+            ['name' => 'Sable de carrière 0/4', 'category' => 'Granulats & Sables', 'purchase_price' => 140.00, 'stock' => 200, 'description' => 'Sable pour mortier et enduit'],
+            ['name' => 'Brique rouge T8', 'category' => 'Maçonnerie & Blocs', 'purchase_price' => 2.20, 'stock' => 4000, 'description' => 'Brique terre cuite standard'],
+            ['name' => 'Parpaing creux 20cm', 'category' => 'Maçonnerie & Blocs', 'purchase_price' => 7.80, 'stock' => 500, 'description' => 'Bloc béton creux 20x20x40'],
+            ['name' => 'Peinture vinylique blanc', 'category' => 'Peintures & Enduits', 'purchase_price' => 255.00, 'stock' => 60, 'description' => 'Peinture intérieure lavable'],
+            ['name' => 'Disjoncteur 16A', 'category' => 'Électricité', 'purchase_price' => 45.00, 'stock' => 80, 'description' => 'Disjoncteur modulaire'],
+            ['name' => 'Perceuse percussion 800W', 'category' => 'Outillage', 'purchase_price' => 680.00, 'stock' => 5, 'description' => 'Perceuse à percussion professionnelle'],
+            ['name' => 'Plâtre de Paris', 'category' => 'Liants Hydrauliques', 'purchase_price' => 45.00, 'stock' => 150, 'description' => 'Plâtre pour enduits et scellements'],
+            ['name' => 'Bétonnière 140L', 'category' => 'Outillage', 'purchase_price' => 2800.00, 'stock' => 2, 'description' => 'Bétonnière électrique chantier'],
         ];
 
         foreach ($products as $data) {
             Product::create($data);
+        }
+
+        // Créer des chantiers
+        $chantiers = [
+            ['name' => 'Chantier A - Port de Casablanca'],
+            ['name' => 'Chantier B - Tour Mohammed VI Rabat'],
+            ['name' => 'Chantier C - Marina Marrakech'],
+        ];
+
+        foreach ($chantiers as $c) {
+            $chantierId = DB::table('chantiers')->insertGetId([
+                'name' => $c['name'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // Consommer des produits aléatoires sur ce chantier
+            $randomProducts = Product::inRandomOrder()->take(5)->get();
+            foreach ($randomProducts as $p) {
+                DB::table('chantier_product')->insert([
+                    'chantier_id' => $chantierId,
+                    'product_id' => $p->id,
+                    'quantity_consumed' => rand(5, 30),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
         }
 
     }

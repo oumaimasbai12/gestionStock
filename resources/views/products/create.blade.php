@@ -1,40 +1,88 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800">
-            {{ __('Crear Producto') }}
-        </h2>
+        <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Créer un Nouveau Produit BTP') }}
+            </h2>
+            <a href="{{ route('products.index') }}" class="inline-flex items-center bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium transition">
+                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                <span>Retour au catalogue</span>
+            </a>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="p-6">
-                    <form action="{{ route('products.store') }}" method="POST">
-                        @csrf
-                        <div class="mb-4">
-                            <label for="name" class="block font-medium text-sm text-gray-700">{{ __('Nombre') }}</label>
-                            <input type="text" name="name" id="name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-gray-400">
+    <div class="py-12 bg-gray-50/50">
+        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden p-8">
+                <form action="{{ route('products.store') }}" method="POST">
+                    @csrf
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <!-- Désignation -->
+                        <div class="md:col-span-2">
+                            <label for="name" class="block text-sm font-semibold text-gray-700 mb-1">Désignation & Matériau</label>
+                            <input type="text" name="name" id="name" required value="{{ old('name') }}" class="mt-1 block w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150">
                             @error('name')
-                            <span class="text-red-500 text-xs">{{ $message }}</span>
+                                <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span>
                             @enderror
                         </div>
-                        <div class="mb-4">
-                            <label for="description" class="block font-medium text-sm text-gray-700">{{ __('Descripción') }}</label>
-                            <textarea name="description" id="description" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-400 focus:border-gray-400"></textarea>
+
+                        <!-- Catégorie -->
+                        <div>
+                            <label for="category" class="block text-sm font-semibold text-gray-700 mb-1">Catégorie</label>
+                            <select name="category" id="category" required class="mt-1 block w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                <option value="" disabled selected>Sélectionner une catégorie</option>
+                                <option value="Liants Hydrauliques" {{ old('category') == 'Liants Hydrauliques' ? 'selected' : '' }}>Liants Hydrauliques</option>
+                                <option value="Acier & Ferraillage" {{ old('category') == 'Acier & Ferraillage' ? 'selected' : '' }}>Acier & Ferraillage</option>
+                                <option value="Granulats & Sables" {{ old('category') == 'Granulats & Sables' ? 'selected' : '' }}>Granulats & Sables</option>
+                                <option value="Maçonnerie & Blocs" {{ old('category') == 'Maçonnerie & Blocs' ? 'selected' : '' }}>Maçonnerie & Blocs</option>
+                                <option value="Peintures & Enduits" {{ old('category') == 'Peintures & Enduits' ? 'selected' : '' }}>Peintures & Enduits</option>
+                                <option value="Électricité" {{ old('category') == 'Électricité' ? 'selected' : '' }}>Électricité</option>
+                                <option value="Outillage" {{ old('category') == 'Outillage' ? 'selected' : '' }}>Outillage</option>
+                                <option value="Divers" {{ old('category') == 'Divers' ? 'selected' : '' }}>Divers</option>
+                            </select>
+                            @error('category')
+                                <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Prix d'achat -->
+                        <div>
+                            <label for="purchase_price" class="block text-sm font-semibold text-gray-700 mb-1">Prix d'Achat (DH)</label>
+                            <input type="number" name="purchase_price" id="purchase_price" step="0.01" min="0" required value="{{ old('purchase_price') }}" class="mt-1 block w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                            @error('purchase_price')
+                                <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Stock initial -->
+                        <div class="md:col-span-2">
+                            <label for="stock" class="block text-sm font-semibold text-gray-700 mb-1">Stock Initial</label>
+                            <input type="number" name="stock" id="stock" min="0" required value="{{ old('stock', 0) }}" class="mt-1 block w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                            @error('stock')
+                                <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Description -->
+                        <div class="md:col-span-2">
+                            <label for="description" class="block text-sm font-semibold text-gray-700 mb-1">Description</label>
+                            <textarea name="description" id="description" rows="4" class="mt-1 block w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150">{{ old('description') }}</textarea>
                             @error('description')
-                            <span class="text-red-500 text-xs">{{ $message }}</span>
+                                <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span>
                             @enderror
                         </div>
-                        <div class="flex justify-end">
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-md font-semibold hover:bg-blue-600 focus:outline-none">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V7l-4-4zM7 17h10M7 13h10M7 9h4m6 8v-8a2 2 0 00-2-2H7" />
-                                </svg>
-                                {{ __('Guardar') }}
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 border-t border-gray-100 pt-6">
+                        <a href="{{ route('products.index') }}" class="inline-flex items-center px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl text-sm transition">
+                            Annuler
+                        </a>
+                        <button type="submit" class="inline-flex items-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-sm shadow-sm transition">
+                            Enregistrer le produit
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

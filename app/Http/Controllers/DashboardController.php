@@ -29,16 +29,10 @@ class DashboardController extends Controller
         $totalInventoryValue = 0;
         try {
             $totalInventoryValue = Product::select(
-                DB::raw('SUM(CAST(quantity AS DECIMAL(10,2)) * CAST(price AS DECIMAL(10,2))) as total')
+                DB::raw('SUM(CAST(stock AS DECIMAL(10,2)) * CAST(purchase_price AS DECIMAL(10,2))) as total')
             )->first()->total ?? 0;
         } catch (\Exception $e) {
-            try {
-                $totalInventoryValue = Product::select(
-                    DB::raw('SUM(CAST(stock AS DECIMAL(10,2)) * CAST(purchase_price AS DECIMAL(10,2))) as total')
-                )->first()->total ?? 0;
-            } catch (\Exception $ex) {
-                $totalInventoryValue = 0;
-            }
+            $totalInventoryValue = 0;
         }
 
         try {
@@ -47,7 +41,7 @@ class DashboardController extends Controller
                 ->join('products', 'chantier_product.product_id', '=', 'products.id')
                 ->select(
                     'chantiers.name as chantier_name', 
-                    DB::raw('SUM(CAST(chantier_product.quantity_consumed AS DECIMAL(10,2)) * CAST(products.price AS DECIMAL(10,2))) as total_spent')
+                    DB::raw('SUM(CAST(chantier_product.quantity_consumed AS DECIMAL(10,2)) * CAST(products.purchase_price AS DECIMAL(10,2))) as total_spent')
                 )
                 ->groupBy('chantiers.id', 'chantiers.name')
                 ->orderBy('total_spent', 'desc')
@@ -59,7 +53,7 @@ class DashboardController extends Controller
         try {
             $categoryDistribution = collect(Product::select(
                     'category as category_name', 
-                    DB::raw('SUM(CAST(quantity AS DECIMAL(10,2)) * CAST(price AS DECIMAL(10,2))) as value')
+                    DB::raw('SUM(CAST(stock AS DECIMAL(10,2)) * CAST(purchase_price AS DECIMAL(10,2))) as value')
                 )
                 ->groupBy('category')
                 ->get());
