@@ -1,42 +1,51 @@
 <x-app-layout>
+    @section('title', 'Détails Fournisseur')
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800">
-            {{ __('Detalle del Proveedor') }}
-        </h2>
+        <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Détail du Fournisseur') }}
+            </h2>
+            <a href="{{ route('suppliers.index') }}" class="inline-flex items-center bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium transition">
+                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                <span>Retour aux fournisseurs</span>
+            </a>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Contenedor principal -->
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="p-6">
-                    <div class="mb-4">
-                        <p class="text-gray-700"><strong>{{ __('NIT:') }}</strong> {{ $supplier->nit }}</p>
+    <div class="py-12 bg-gray-50/50">
+        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden p-8">
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                            <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">{{ __('NIT') }}</span>
+                            <div class="text-base font-bold text-gray-900 mt-1">{{ $supplier->nit }}</div>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                            <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">{{ __('Nom') }}</span>
+                            <div class="text-base font-bold text-gray-900 mt-1">{{ $supplier->name }}</div>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                            <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">{{ __('Téléphone') }}</span>
+                            <div class="text-base font-bold text-gray-900 mt-1">{{ $supplier->phone }}</div>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                            <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">{{ __('Email') }}</span>
+                            <div class="text-base font-bold text-gray-900 mt-1">{{ $supplier->email }}</div>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 md:col-span-2">
+                            <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">{{ __('Adresse') }}</span>
+                            <div class="text-base font-bold text-gray-900 mt-1">{{ $supplier->address }}</div>
+                        </div>
                     </div>
-                    <div class="mb-4">
-                        <p class="text-gray-700"><strong>{{ __('Nombre:') }}</strong> {{ $supplier->name }}</p>
-                    </div>
-                    <div class="mb-4">
-                        <p class="text-gray-700"><strong>{{ __('Teléfono:') }}</strong> {{ $supplier->phone }}</p>
-                    </div>
-                    <div class="mb-4">
-                        <p class="text-gray-700"><strong>{{ __('Email:') }}</strong> {{ $supplier->email }}</p>
-                    </div>
-                    <div class="mb-4">
-                        <p class="text-gray-700"><strong>{{ __('Dirección:') }}</strong> {{ $supplier->address }}</p>
-                    </div>
-                    <div class="flex justify-end">
-                        <a href="{{ route('suppliers.edit', $supplier) }}" class="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-md font-semibold hover:bg-blue-600">
-                            <!-- Icono de editar (lápiz) -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 3.487a2.125 2.125 0 013.006 3.006L7.5 18.862l-4.5 1.5 1.5-4.5L16.862 3.487z" />
-                            </svg>
-                            {{ __('Editar') }}
+
+                    <div class="flex justify-end space-x-3 border-t border-gray-100 pt-6">
+                        <a href="{{ route('suppliers.index') }}" class="inline-flex items-center px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl text-sm transition">
+                            Fermer
                         </a>
                     </div>
                 </div>
             </div>
-            <!-- Fin contenedor principal -->
         </div>
     </div>
 </x-app-layout>

@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('title', 'Sorties - Corbeille')
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
@@ -48,7 +49,7 @@
                                     <td class="py-4 px-6">
                                         @if($exit->chantier)
                                             <div class="inline-flex items-center text-xs font-semibold bg-gray-50 text-gray-600 border border-gray-200 px-2 py-0.5 rounded-md mb-1">
-                                                🏗️ {{ $exit->chantier->name }}
+ {{ $exit->chantier->name }}
                                             </div>
                                         @endif
                                         @if($exit->customer)

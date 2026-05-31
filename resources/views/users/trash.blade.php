@@ -1,7 +1,8 @@
 <x-app-layout>
+    @section('title', 'Utilisateurs - Corbeille')
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800">
-            {{ __('Usuarios Eliminados') }}
+            {{ __('Utilisateurs supprimés') }}
         </h2>
     </x-slot>
 
@@ -14,9 +15,9 @@
                         <table class="min-w-full w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Nombre') }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Nom') }}</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Email') }}</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Acciones') }}</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Actions') }}</th>
                             </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
@@ -30,9 +31,9 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M4 10l6-6a9 9 0 11-3 14.32" />
                                         </svg>
-                                        {{ __('Restaurar') }}
+                                        {{ __('Restaurer') }}
                                     </a>
-                                    <form action="{{ route('users.forceDelete', $user->id) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('¿Estás seguro de eliminar permanentemente?') }}')">
+                                    <form action="{{ route('users.forceDelete', $user->id) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('Êtes-vous sûr de supprimer définitivement?') }}')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="inline-flex items-center px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600">
@@ -40,7 +41,7 @@
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4a1 1 0 011 1v2H9V4a1 1 0 011-1z"/>
                                             </svg>
-                                            {{ __('Eliminar Permanentemente') }}
+                                            {{ __('Supprimer définitivement') }}
                                         </button>
                                     </form>
                                 </td>

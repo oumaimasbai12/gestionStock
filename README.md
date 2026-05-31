@@ -1,95 +1,167 @@
-# 📦 Inventory Management System
+# Stocket - Systeme de Gestion des Stocks
 
-This project is an **Laravel-based** inventory management system that allows you to manage products, suppliers, customers, stock entries, and exits, with a user-friendly interface and real-time charts.
+This project is a Laravel-based inventory management system for the BTP (Construction) sector. It allows you to manage products, suppliers, customers, stock entries and exits, track unpaid invoices, monitor inventory value over time, and receive low-stock alerts.
 
-## 🚀 Features
+## Features
 
-- Full CRUD for **Users, Customers, Suppliers, and Products**.
-- **Stock Entries and Exits** management with validations.
-- Dashboard with **Chart.js** visualizations.
-- SoftDeletes support for restoring deleted items.
-- Responsive design with **Tailwind CSS**.
-- Built with **Laravel Jetstream** and **Livewire** for authentication, user management, and interactive UI components.
+- Full CRUD for Users, Customers, Suppliers, Products, Stock Entries, and Stock Exits.
+- Stock Entries and Exits with automatic stock deduction and validation.
+- Business Intelligence Dashboard with Chart.js visualizations (doughnut, line charts).
+- Inventory Snapshots - daily automated recording of total inventory value to track trends.
+- Low Stock Email Alerts - automatic emails when products fall below their alert threshold.
+- Unpaid Invoices (Impayes) - dedicated page with Mark as Paid action and Global Debt KPI.
+- Per-product alert and safety stock thresholds.
+- In-app Notifications - bell icon dropdown with overdue invoice alerts and critical stock alerts.
+- Date-filterable KPIs - filter revenue, pending debt, and best-selling product by date range.
+- SoftDeletes with restore/force-delete for all resources.
+- Role-based access control (Admin, Storekeeper, Site Manager) via Spatie Permission.
+- Responsive design with Tailwind CSS.
+- Built with Laravel Jetstream (Livewire stack) for authentication and profile management.
 
-![welcome](https://github.com/user-attachments/assets/0ce0a73a-6a14-4d3e-9668-6a451d199f4a)
-![dashboard](https://github.com/user-attachments/assets/51024722-d5fa-4b5c-8be3-23ffc43cf7a3)
+## Requirements
 
-
-
-## 📌 Requirements
-
-Before installing the project, make sure you have:
-
-- PHP 8.x
+- PHP 8.1 or higher
 - Composer
 - Node.js and NPM
-- MySQL or PostgreSQL
+- A database (MySQL, PostgreSQL, or SQLite)
 
-## 🛠 Installation
+## Installation
 
-Follow these steps to set up the project in your environment:
+Follow these steps step by step:
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/cawtoz/stocket.git
-   cd stocket
-   ```
-2. Install PHP and Node.js dependencies:
-   ```bash
-   composer install
-   npm install && npm run build
-   ```
-3. Configure environment variables:
-   ```bash
-   cp .env.example .env
-   php artisan key:generate
-   ```
-4. Set up the database in the `.env` file:
-   ```
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=your_database_name
-   DB_USERNAME=your_username
-   DB_PASSWORD=your_password
-   ```
-5. Run migrations and seeders:
-   ```bash
-   php artisan migrate --seed
-   ```
-6. Compile frontend assets (Jetstream & Livewire):
-   ```bash
-   npm run dev
-   ```
-7. Start the server:
-   ```bash
-   php artisan serve
-   ```
+### 1. Clone the repository
 
-## 📂 Project Structure
+Open your terminal and run:
+
+```bash
+git clone https://github.com/oumaimasbai12/gestionStock.git
+cd gestionStock
+```
+
+### 2. Install PHP dependencies
+
+```bash
+composer install
+```
+
+### 3. Install JavaScript dependencies
+
+```bash
+npm install
+npm run build
+```
+
+### 4. Configure environment
+
+Copy the example environment file:
+
+```bash
+cp .env.example .env
+```
+
+Generate the application encryption key:
+
+```bash
+php artisan key:generate
+```
+
+### 5. Set up your database
+
+Open the `.env` file in a text editor and update these lines with your database information:
+
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
+
+For SQLite (simplest option), change to:
+
+```
+DB_CONNECTION=sqlite
+```
+
+Then create an empty file: `touch database/database.sqlite`
+
+### 6. Run database migrations and seeders
+
+This creates the tables and fills them with sample data:
+
+```bash
+php artisan migrate --seed
+```
+
+### 7. Configure mail (optional, for low stock email alerts)
+
+By default the project uses Mailpit for local development. For production, update these in `.env`:
+
+```
+MAIL_MAILER=smtp
+MAIL_HOST=your-smtp-host
+MAIL_PORT=587
+MAIL_USERNAME=your-email
+MAIL_PASSWORD=your-password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="noreply@yourdomain.com"
+MAIL_FROM_NAME="Stocket"
+```
+
+### 8. Start the development server
+
+```bash
+php artisan serve
+```
+
+Open your browser and go to `http://localhost:8000`.
+
+### 9. Login
+
+Default admin account created by the seeder:
+
+- Email: `admin@stocket.com`
+- Password: `12345678`
+
+## Scheduled Tasks
+
+The following commands run automatically via the scheduler. Add this cron entry to your server:
+
+```
+* * * * * cd /path/to/project && php artisan schedule:run >> /dev/null 2>&1
+```
+
+| Command | Schedule | Description |
+|---------|----------|-------------|
+| `inventory:snapshot` | Daily at 00:00 | Records total inventory value |
+| `app:check-stock-levels` | Daily at 08:00 | Sends low stock email alerts |
+| `notifications:check` | Every 6 hours | Creates in-app notifications for overdue invoices and critical stock |
+
+## Project Structure
 
 ```
 app/
-├── Http/
-│   ├── Controllers/
-│   │   ├── ProductController.php
-│   │   ├── SupplierController.php
-│   │   ├── CustomerController.php
-│   │   ├── StockEntryController.php
-│   │   ├── StockExitController.php
-│   │   ├── DashboardController.php
+├── Console/Commands/
+│   ├── CheckNotifications.php
+│   ├── CheckStockLevels.php
+│   └── InventorySnapshot.php
+├── Http/Controllers/
+│   ├── DashboardController.php
+│   ├── ProductController.php
+│   ├── SupplierController.php
+│   ├── CustomerController.php
+│   ├── StockEntryController.php
+│   └── StockExitController.php
+├── Mail/
+│   └── LowStockAlert.php
 ├── Models/
 │   ├── Product.php
 │   ├── Supplier.php
 │   ├── Customer.php
 │   ├── StockEntry.php
-│   ├── StockExit.php
-resources/
-├── views/
-│   ├── dashboard.blade.php
-│   ├── products/
-│   ├── suppliers/
-│   ├── customers/
-│   ├── entries/
-│   ├── exits/
+│   └── StockExit.php
+└── Notifications/
+    ├── CriticalStockAlert.php
+    └── OverdueInvoice.php
 ```

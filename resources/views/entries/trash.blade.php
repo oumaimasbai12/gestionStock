@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('title', 'Entrées - Corbeille')
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
@@ -46,14 +47,14 @@
                                     
                                     <!-- Supplier -->
                                     <td class="py-4 px-6 font-medium text-gray-700">
-                                        🏢 {{ optional($entry->supplier)->name ?? 'N/A' }}
+ {{ optional($entry->supplier)->name ?? 'N/A' }}
                                     </td>
 
                                     <!-- Affectation -->
                                     <td class="py-4 px-6">
                                         @if($entry->chantier)
                                             <span class="inline-flex items-center text-xs font-semibold bg-gray-50 text-gray-600 border border-gray-200 px-2 py-0.5 rounded-md">
-                                                🏗️ {{ $entry->chantier->name }}
+ {{ $entry->chantier->name }}
                                             </span>
                                         @else
                                             <span class="text-xs text-gray-400">Dépôt Central (Global)</span>

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StockEntryController;
 use App\Http\Controllers\StockExitController;
@@ -36,15 +37,13 @@ Route::middleware([
 
 });
 
-// 2. Les routes réservées uniquement aux Admins (role:admin)
+// 2. Les routes gérées par contrôleurs avec contrôles d'accès précis
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
-    'verified',
-    'role:admin'
+    'verified'
 ])->group(function () {
 
-    Route::get('/dashboard/stats', [DashboardController::class, 'stats'])->name('dashboard.stats');
 
     // Users Management
     Route::get('users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
@@ -56,6 +55,7 @@ Route::middleware([
     Route::get('customers/{id}/restore', [CustomerController::class, 'restore'])->name('customers.restore');
     Route::delete('customers/{id}/force-delete', [CustomerController::class, 'forceDelete'])->name('customers.forceDelete');
     Route::get('customers/trash', [CustomerController::class, 'trash'])->name('customers.trash');
+    Route::get('customers/{customer}/sales', [CustomerController::class, 'salesHistory'])->name('customers.sales');
     Route::resource('customers', CustomerController::class);
 
     // Products Management (M9ada: l'import t-7et houwa l'owl 9bel l'resource!)
@@ -82,6 +82,19 @@ Route::middleware([
     Route::get('exits/{id}/restore', [StockExitController::class, 'restore'])->name('exits.restore');
     Route::delete('exits/{id}/force-delete', [StockExitController::class, 'forceDelete'])->name('exits.forceDelete');
     Route::get('exits/trash', [StockExitController::class, 'trash'])->name('exits.trash');
+    Route::get('exits/pending', [StockExitController::class, 'pending'])->name('exits.pending');
+    Route::patch('exits/{exit}/mark-paid', [StockExitController::class, 'markAsPaid'])->name('exits.mark-paid');
     Route::resource('exits', StockExitController::class);
+
+    // Notifications
+    Route::patch('notifications/{id}/read', function ($id) {
+        auth()->user()->notifications()->where('id', $id)->first()->markAsRead();
+        return redirect()->back();
+    })->name('notifications.read');
+
+    Route::post('notifications/read-all', function () {
+        auth()->user()->unreadNotifications->markAsRead();
+        return redirect()->back();
+    })->name('notifications.read-all');
 
 });

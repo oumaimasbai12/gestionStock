@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('title', 'Détails Entrée')
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -20,11 +21,11 @@
                     <div class="flex items-center justify-between border-b border-gray-50 pb-4">
                         <div>
                             <span class="text-xs text-gray-400 font-medium uppercase tracking-wider block">Référence Document</span>
-                            <span class="text-xl font-bold text-gray-900">{{ $stockEntry->document ?? 'N/A' }}</span>
+                            <span class="text-xl font-bold text-gray-900">{{ $entry->document ?? 'N/A' }}</span>
                         </div>
                         <div>
                             <span class="text-xs text-gray-400 font-medium uppercase tracking-wider block text-right">Date d'approvisionnement</span>
-                            <span class="text-sm font-semibold text-gray-700 block text-right">{{ $stockEntry->created_at->format('d/m/Y à H:i') }}</span>
+                            <span class="text-sm font-semibold text-gray-700 block text-right">{{ optional($entry->created_at)->format('d/m/Y à H:i') ?? '-' }}</span>
                         </div>
                     </div>
 
@@ -33,15 +34,15 @@
                         <!-- Product Info -->
                         <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
                             <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">Produit BTP Reçu</span>
-                            <div class="text-base font-bold text-gray-900 mt-1">{{ optional($stockEntry->product)->name ?? 'Produit Supprimé' }}</div>
-                            <div class="text-xs text-gray-400 mt-0.5">Catégorie: {{ optional($stockEntry->product)->category ?? 'N/A' }}</div>
+                            <div class="text-base font-bold text-gray-900 mt-1">{{ optional($entry->product)->name ?? 'Produit Supprimé' }}</div>
+                            <div class="text-xs text-gray-400 mt-0.5">Catégorie: {{ optional($entry->product)->category ?? 'N/A' }}</div>
                         </div>
 
                         <!-- Fournisseur Info -->
                         <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
                             <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">Fournisseur</span>
                             <div class="text-base font-bold text-gray-900 mt-1">
-                                🏢 {{ optional($stockEntry->supplier)->name ?? 'N/A' }}
+ {{ optional($entry->supplier)->name ?? 'N/A' }}
                             </div>
                         </div>
 
@@ -49,7 +50,7 @@
                         <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
                             <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">Affectation Chantier</span>
                             <div class="text-base font-bold text-gray-900 mt-1">
-                                {{ $stockEntry->chantier ? '🏗️ ' . $stockEntry->chantier->name : 'Dépôt Central (Global)' }}
+                                {{ $entry->chantier ? '' . $entry->chantier->name : 'Dépôt Central (Global)' }}
                             </div>
                         </div>
 
@@ -57,7 +58,7 @@
                         <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
                             <span class="text-xs text-gray-400 font-medium uppercase tracking-wider block">Quantité Reçue</span>
                             <div class="text-xl font-black text-emerald-600 mt-1">
-                                + {{ $stockEntry->quantity }} unités
+                                + {{ $entry->quantity }} unités
                             </div>
                         </div>
                     </div>

@@ -1,4 +1,5 @@
 <x-guest-layout>
+    @section('title', 'Authentification 2 facteurs')
     <x-authentication-card>
         <x-slot name="logo">
             <x-authentication-card-logo />

@@ -17,6 +17,7 @@ class StockExit extends Model
         'quantity',
         'unit_price',
         'paid_amount',
+        'amount_due',
         'payment_status',
         'document',
     ];

@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('title', 'Détails Sortie')
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -20,11 +21,11 @@
                     <div class="flex items-center justify-between border-b border-gray-50 pb-4">
                         <div>
                             <span class="text-xs text-gray-400 font-medium uppercase tracking-wider block">Référence Document</span>
-                            <span class="text-xl font-bold text-gray-900">{{ $stockExit->document ?? 'N/A' }}</span>
+                            <span class="text-xl font-bold text-gray-900">{{ $exit->document ?? 'N/A' }}</span>
                         </div>
                         <div>
                             <span class="text-xs text-gray-400 font-medium uppercase tracking-wider block text-right">Date d'émission</span>
-                            <span class="text-sm font-semibold text-gray-700 block text-right">{{ $stockExit->created_at->format('d/m/Y à H:i') }}</span>
+                            <span class="text-sm font-semibold text-gray-700 block text-right">{{ optional($exit->created_at)->format('d/m/Y à H:i') ?? '-' }}</span>
                         </div>
                     </div>
 
@@ -33,15 +34,15 @@
                         <!-- Product Info -->
                         <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
                             <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">Produit BTP</span>
-                            <div class="text-base font-bold text-gray-900 mt-1">{{ optional($stockExit->product)->name ?? 'Produit Supprimé' }}</div>
-                            <div class="text-xs text-gray-400 mt-0.5">Catégorie: {{ optional($stockExit->product)->category ?? 'N/A' }}</div>
+                            <div class="text-base font-bold text-gray-900 mt-1">{{ optional($exit->product)->name ?? 'Produit Supprimé' }}</div>
+                            <div class="text-xs text-gray-400 mt-0.5">Catégorie: {{ optional($exit->product)->category ?? 'N/A' }}</div>
                         </div>
 
                         <!-- Chantier Info -->
                         <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
                             <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">Affectation Chantier</span>
                             <div class="text-base font-bold text-gray-900 mt-1">
-                                {{ $stockExit->chantier ? '🏗️ ' . $stockExit->chantier->name : 'Non Affecté à un chantier' }}
+                                {{ $exit->chantier ? '' . $exit->chantier->name : 'Non Affecté à un chantier' }}
                             </div>
                         </div>
 
@@ -49,7 +50,7 @@
                         <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
                             <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">Client Destinataire</span>
                             <div class="text-base font-bold text-gray-900 mt-1">
-                                {{ $stockExit->customer ? '👤 ' . $stockExit->customer->name : 'Aucun client' }}
+                                {{ $exit->customer ? '' . $exit->customer->name : 'Aucun client' }}
                             </div>
                         </div>
 
@@ -57,11 +58,11 @@
                         <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
                             <span class="text-xs text-gray-400 font-medium uppercase tracking-wider block">Statut du Paiement</span>
                             <div class="mt-1">
-                                @if($stockExit->payment_status == 'paid')
+                                @if($exit->payment_status == 'paid')
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
                                         Payé (Entièrement)
                                     </span>
-                                @elseif($stockExit->payment_status == 'partial')
+                                @elseif($exit->payment_status == 'partial')
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-100">
                                         Paiement Partiel
                                     </span>
@@ -81,32 +82,33 @@
                         <div class="space-y-3">
                             <div class="flex justify-between text-sm text-gray-600">
                                 <span>Quantité Sortie :</span>
-                                <span class="font-bold text-gray-900">{{ $stockExit->quantity }} unités</span>
+                                <span class="font-bold text-gray-900">{{ $exit->quantity }} unités</span>
                             </div>
                             <div class="flex justify-between text-sm text-gray-600">
                                 <span>Prix Unitaire appliqué :</span>
-                                <span class="font-bold text-gray-900">{{ number_format($stockExit->unit_price, 2, ',', ' ') }} DH</span>
+                                <span class="font-bold text-gray-900">{{ number_format($exit->unit_price, 2, ',', ' ') }} DH</span>
                             </div>
                             <hr class="border-gray-100">
                             <div class="flex justify-between text-sm text-gray-600">
                                 <span>Montant Vente Total :</span>
-                                <span class="font-extrabold text-gray-900">{{ number_format($stockExit->quantity * $stockExit->unit_price, 2, ',', ' ') }} DH</span>
+                                <span class="font-extrabold text-gray-900">{{ number_format($exit->quantity * $exit->unit_price, 2, ',', ' ') }} DH</span>
                             </div>
                             <div class="flex justify-between text-sm text-emerald-700">
                                 <span>Montant Payé Initialement :</span>
-                                <span class="font-extrabold">{{ number_format($stockExit->paid_amount, 2, ',', ' ') }} DH</span>
+                                <span class="font-extrabold">{{ number_format($exit->paid_amount, 2, ',', ' ') }} DH</span>
                             </div>
                             <hr class="border-gray-100">
                             <div class="flex justify-between text-base font-black text-gray-900">
                                 <span>Solde Restant Dû :</span>
-                                <span class="text-red-500">{{ number_format(($stockExit->quantity * $stockExit->unit_price) - $stockExit->paid_amount, 2, ',', ' ') }} DH</span>
+                                <span class="text-red-500">{{ number_format(($exit->quantity * $exit->unit_price) - $exit->paid_amount, 2, ',', ' ') }} DH</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Action Footer -->
-                    <div class="flex justify-end space-x-3 border-t border-gray-100 pt-6">
+                    <div class="flex justify-between items-center border-t border-gray-100 pt-6">
                         <a href="{{ route('exits.index') }}" class="inline-flex items-center px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl text-sm transition">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                             Fermer
                         </a>
                     </div>

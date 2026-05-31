@@ -12,10 +12,16 @@ class Customer extends Model
 
     protected $fillable = [
         'document_id',
+        'customer_type',
         'name',
         'email',
         'address',
         'phone',
+        'ice',
     ];
 
+    public function exits()
+    {
+        return $this->hasMany(\App\Models\StockExit::class);
+    }
 }

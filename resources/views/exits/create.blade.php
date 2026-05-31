@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('title', 'Nouvelle Sortie')
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -41,7 +42,7 @@
                                 <option value="" selected>Aucun chantier (Affectation directe)</option>
                                 @foreach($chantiers as $chantier)
                                     <option value="{{ $chantier->id }}" {{ old('chantier_id') == $chantier->id ? 'selected' : '' }}>
-                                        🏗️ {{ $chantier->name }}
+ {{ $chantier->name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -57,7 +58,7 @@
                                 <option value="" selected>Sélectionner un client</option>
                                 @foreach($customers as $customer)
                                     <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
-                                        👤 {{ $customer->name }}
+ {{ $customer->name }}
                                     </option>
                                 @endforeach
                             </select>

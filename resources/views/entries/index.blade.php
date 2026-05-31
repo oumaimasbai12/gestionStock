@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('title', 'Entrées Stock')
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
@@ -68,14 +69,14 @@
                                     
                                     <!-- Supplier -->
                                     <td class="py-4 px-6 font-medium text-gray-700">
-                                        🏢 {{ optional($entry->supplier)->name ?? 'N/A' }}
+                                         {{ optional($entry->supplier)->name ?? 'N/A' }}
                                     </td>
 
                                     <!-- Affectation Chantier -->
                                     <td class="py-4 px-6">
                                         @if($entry->chantier)
                                             <span class="inline-flex items-center text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100/60 px-2 py-0.5 rounded-md">
-                                                🏗️ {{ $entry->chantier->name }}
+ {{ $entry->chantier->name }}
                                             </span>
                                         @else
                                             <span class="text-xs text-gray-400">Dépôt Central / Global</span>
@@ -97,8 +98,15 @@
                                                 </svg>
                                                 <span>Détails</span>
                                             </a>
-                                            
+
                                             @if(!auth()->user()->hasRole('site_manager'))
+                                                <a href="{{ route('entries.edit', $entry) }}" class="inline-flex items-center bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-100 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm transition space-x-1" title="Modifier">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-2.036a5.5 5.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                                    </svg>
+                                                    <span>Modifier</span>
+                                                </a>
+
                                                 <form action="{{ route('entries.destroy', $entry) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir archiver cette entrée de stock ?');" class="inline">
                                                     @csrf
                                                     @method('DELETE')

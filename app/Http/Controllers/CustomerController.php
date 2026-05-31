@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\StockExit;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
-    /**
-     * Set up auth checks.
-     */
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -20,108 +18,92 @@ class CustomerController extends Controller
         });
     }
 
-    /**
-     * Display a listing of the customers.
-     */
     public function index()
     {
         $customers = Customer::withoutTrashed()->paginate(10);
         return view('customers.index', compact('customers'));
     }
 
-    /**
-     * Show the form for creating a new customer.
-     */
     public function create()
     {
         return view('customers.create');
     }
 
-    /**
-     * Store a newly created customer in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
             'document_id' => 'required|string|max:255|unique:customers',
+            'customer_type' => 'required|in:individual,artisan,entreprise',
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|unique:customers',
             'address' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
+            'ice' => 'required_if:customer_type,entreprise|nullable|string|max:255',
         ]);
 
         Customer::create($request->all());
 
-        return redirect()->route('customers.index')->with('success', 'Cliente creado exitosamente.');
+        return redirect()->route('customers.index')->with('success', 'Client créé avec succès.');
     }
 
-    /**
-     * Display the specified customer.
-     */
     public function show(Customer $customer)
     {
         return view('customers.show', compact('customer'));
     }
 
-    /**
-     * Show the form for editing the specified customer.
-     */
     public function edit(Customer $customer)
     {
         return view('customers.edit', compact('customer'));
     }
 
-    /**
-     * Update the specified customer in storage.
-     */
     public function update(Request $request, Customer $customer)
     {
         $request->validate([
             'document_id' => 'required|string|max:255|unique:customers,document_id,'.$customer->id,
+            'customer_type' => 'required|in:individual,artisan,entreprise',
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|unique:customers,email,'.$customer->id,
             'address' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
+            'ice' => 'required_if:customer_type,entreprise|nullable|string|max:255',
         ]);
 
         $customer->update($request->all());
 
-        return redirect()->route('customers.index')->with('success', 'Cliente actualizado exitosamente.');
+        return redirect()->route('customers.index')->with('success', 'Client mis à jour avec succès.');
     }
 
-    /**
-     * Remove the specified customer from storage.
-     */
     public function destroy(Customer $customer)
     {
         $customer->delete();
-        return redirect()->route('customers.index')->with('success', 'Cliente eliminado exitosamente.');
+        return redirect()->route('customers.index')->with('success', 'Client supprimé avec succès.');
     }
 
-    /**
-     * Restore a soft-deleted customer.
-     */
     public function restore($id)
     {
         Customer::withTrashed()->findOrFail($id)->restore();
-        return redirect()->route('customers.index')->with('success', 'Cliente restaurado exitosamente.');
+        return redirect()->route('customers.index')->with('success', 'Client restauré avec succès.');
     }
 
-    /**
-     * Permanently delete a customer.
-     */
     public function forceDelete($id)
     {
         Customer::withTrashed()->findOrFail($id)->forceDelete();
-        return redirect()->route('customers.index')->with('success', 'Cliente eliminado permanentemente.');
+        return redirect()->route('customers.index')->with('success', 'Client supprimé définitivement.');
     }
 
-    /**
-     * Display a list of soft-deleted customers.
-     */
     public function trash()
     {
         $customers = Customer::onlyTrashed()->paginate(10);
         return view('customers.trash', compact('customers'));
+    }
+
+    public function salesHistory(Customer $customer)
+    {
+        $exits = StockExit::where('customer_id', $customer->id)
+            ->with('product', 'chantier')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('customers.sales', compact('customer', 'exits'));
     }
 }

@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('title', 'Produits - Corbeille')
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>

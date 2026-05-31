@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('title', 'Nouvelle Entrée')
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -41,7 +42,7 @@
                                 <option value="" disabled selected>Sélectionner un fournisseur</option>
                                 @foreach($suppliers as $supplier)
                                     <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>
-                                        🏢 {{ $supplier->name }}
+ {{ $supplier->name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -54,7 +55,7 @@
                         <div>
                             @if(auth()->user()->hasRole('site_manager'))
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Chantier d'Affectation</label>
-                                <input type="text" disabled value="🏗️ {{ optional(auth()->user()->chantier)->name }}" class="mt-1 block w-full border-gray-300 rounded-xl shadow-sm bg-gray-50 text-gray-500 transition duration-150 font-bold">
+                                <input type="text" disabled value=" {{ optional(auth()->user()->chantier)->name }}" class="mt-1 block w-full border-gray-300 rounded-xl shadow-sm bg-gray-50 text-gray-500 transition duration-150 font-bold">
                                 <input type="hidden" name="chantier_id" value="{{ auth()->user()->chantier_id }}">
                             @else
                                 <label for="chantier_id" class="block text-sm font-semibold text-gray-700 mb-1">Chantier d'Affectation (Optionnel)</label>
@@ -62,7 +63,7 @@
                                     <option value="" selected>Dépôt central (Global)</option>
                                     @foreach($chantiers as $chantier)
                                         <option value="{{ $chantier->id }}" {{ old('chantier_id') == $chantier->id ? 'selected' : '' }}>
-                                            🏗️ {{ $chantier->name }}
+ {{ $chantier->name }}
                                         </option>
                                     @endforeach
                                 </select>

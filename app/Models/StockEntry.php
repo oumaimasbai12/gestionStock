@@ -30,7 +30,7 @@ class StockEntry extends Model
 
     public function chantier()
     {
-        return $this->belongsTo(\App\Models\Chantier::class)->withTrashed();
+        return $this->belongsTo(\App\Models\Chantier::class);
     }
 
 }

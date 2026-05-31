@@ -1,4 +1,5 @@
 <x-guest-layout>
+    @section('title', 'Réinitialisation mot de passe')
     <x-authentication-card>
         <x-slot name="logo">
             <x-authentication-card-logo />

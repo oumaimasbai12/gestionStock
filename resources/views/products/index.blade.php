@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('title', 'Produits')
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
             <div>
