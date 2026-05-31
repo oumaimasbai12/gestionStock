@@ -45,6 +45,7 @@
                                 <th class="py-4 px-6">{{ __('Nom') }}</th>
                                 <th class="py-4 px-6">{{ __('Email') }}</th>
                                 <th class="py-4 px-6">{{ __('Rôle') }}</th>
+                                <th class="py-4 px-6">{{ __('Chantier') }}</th>
                                 <th class="py-4 px-6 text-right">{{ __('Actions') }}</th>
                             </tr>
                         </thead>
@@ -58,14 +59,21 @@
                                         @php
                                             $roleLabels = [
                                                 'admin' => 'Admin',
-                                                'storekeeper' => 'Magasiner',
-                                                'site_manager' => 'Super viseur de chantier',
+                                                'storekeeper' => 'Magasinier',
+                                                'site_manager' => 'Responsable chantier',
                                             ];
                                         @endphp
                                         <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-bold bg-accent/15 text-ink border border-accent/30">
                                             {{ $roleLabels[$role->name] ?? $role->name }}
                                         </span>
                                     @endforeach
+                                </td>
+                                <td class="py-4 px-6 text-ink/70">
+                                    @if($user->hasRole('site_manager'))
+                                        {{ $user->chantier?->name ?? '— Non assigné' }}
+                                    @else
+                                        <span class="text-ink/40">—</span>
+                                    @endif
                                 </td>
                                 <td class="py-4 px-6 text-right">
                                     <div class="inline-flex items-center space-x-2">
@@ -97,7 +105,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="4" class="py-12 text-center text-ink/50">
+                                <td colspan="5" class="py-12 text-center text-ink/50">
                                     <div class="flex flex-col items-center justify-center space-y-2">
                                         <svg class="w-10 h-10 text-ink/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
                                         <span class="text-sm font-medium">Aucun utilisateur trouvé.</span>

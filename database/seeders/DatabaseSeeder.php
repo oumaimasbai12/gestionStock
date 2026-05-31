@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Chantier;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
@@ -10,29 +11,37 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $roleAdmin = Role::create(['name' => 'admin']);
-        $roleStorekeeper = Role::create(['name' => 'storekeeper']);
-        $roleSiteManager = Role::create(['name' => 'site_manager']);
+        $this->call(ChantierSeeder::class);
 
-        $admin = User::create([
-            'name' => 'Stocket Admin',
-            'email' => 'admin@stocket.com',
-            'password' => bcrypt('12345678'),
-        ]);
-        $admin->assignRole($roleAdmin);
+        $roleAdmin = Role::firstOrCreate(['name' => 'admin']);
+        $roleStorekeeper = Role::firstOrCreate(['name' => 'storekeeper']);
+        $roleSiteManager = Role::firstOrCreate(['name' => 'site_manager']);
 
-        $storekeeper = User::create([
-            'name' => 'Sébastien Storekeeper',
-            'email' => 'storekeeper@stocket.com',
-            'password' => bcrypt('12345678'),
-        ]);
-        $storekeeper->assignRole($roleStorekeeper);
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@stocket.com'],
+            ['name' => 'Stocket Admin', 'password' => bcrypt('12345678')]
+        );
+        $admin->syncRoles([$roleAdmin]);
 
-        $manager = User::create([
-            'name' => 'Mohamed Site Manager',
-            'email' => 'manager@stocket.com',
-            'password' => bcrypt('12345678'),
-        ]);
-        $manager->assignRole($roleSiteManager);
+        $storekeeper = User::firstOrCreate(
+            ['email' => 'storekeeper@stocket.com'],
+            ['name' => 'Sébastien Storekeeper', 'password' => bcrypt('12345678')]
+        );
+        $storekeeper->syncRoles([$roleStorekeeper]);
+
+        $defaultChantier = Chantier::first();
+
+        $manager = User::firstOrCreate(
+            ['email' => 'manager@stocket.com'],
+            [
+                'name' => 'Mohamed Site Manager',
+                'password' => bcrypt('12345678'),
+                'chantier_id' => $defaultChantier?->id,
+            ]
+        );
+        $manager->syncRoles([$roleSiteManager]);
+        if ($defaultChantier && !$manager->chantier_id) {
+            $manager->update(['chantier_id' => $defaultChantier->id]);
+        }
     }
 }

@@ -37,15 +37,35 @@
 
                         <!-- Chantier de Destination -->
                         <div>
-                            <label for="chantier_id" class="block text-sm font-semibold text-ink mb-1">Chantier d'Affectation</label>
-                            <select name="chantier_id" id="chantier_id" class="mt-1 app-input">
-                                <option value="" selected>Aucun chantier (Affectation directe)</option>
-                                @foreach($chantiers as $chantier)
-                                    <option value="{{ $chantier->id }}" {{ old('chantier_id') == $chantier->id ? 'selected' : '' }}>
- {{ $chantier->name }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            @if(auth()->user()->hasRole('site_manager'))
+                                <label class="block text-sm font-semibold text-ink mb-1">Chantier d'Affectation</label>
+                                @if(auth()->user()->chantier_id)
+                                    <input type="text" disabled value="{{ auth()->user()->chantier->name }}" class="mt-1 app-input bg-sage/10 font-semibold">
+                                    <input type="hidden" name="chantier_id" value="{{ auth()->user()->chantier_id }}">
+                                @else
+                                    <p class="mt-1 p-3 text-sm text-accent bg-accent/10 border-2 border-accent/30 rounded-md">
+                                        Aucun chantier assigné. Demandez à l'administrateur de vous en attribuer un.
+                                    </p>
+                                @endif
+                            @else
+                                <label for="chantier_id" class="block text-sm font-semibold text-ink mb-1">Chantier d'Affectation</label>
+                                @if($chantiers->isEmpty())
+                                    <p class="mt-1 p-3 text-sm text-ink/70 bg-sage/10 border-2 border-ink/15 rounded-md">
+                                        Aucun chantier disponible.
+                                        <a href="{{ route('chantiers.create') }}" class="text-sage font-semibold underline">Créer un chantier</a>
+                                    </p>
+                                    <input type="hidden" name="chantier_id" value="">
+                                @else
+                                    <select name="chantier_id" id="chantier_id" class="mt-1 app-input">
+                                        <option value="">Aucun chantier (affectation directe)</option>
+                                        @foreach($chantiers as $chantier)
+                                            <option value="{{ $chantier->id }}" {{ old('chantier_id') == $chantier->id ? 'selected' : '' }}>
+                                                {{ $chantier->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                @endif
+                            @endif
                             @error('chantier_id')
                                 <span class="text-accent text-xs mt-1 block font-medium">{{ $message }}</span>
                             @enderror

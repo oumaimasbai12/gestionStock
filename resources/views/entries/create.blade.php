@@ -55,18 +55,25 @@
                         <div>
                             @if(auth()->user()->hasRole('site_manager'))
                                 <label class="block text-sm font-semibold text-ink mb-1">Chantier d'Affectation</label>
-                                <input type="text" disabled value=" {{ optional(auth()->user()->chantier)->name }}" class="mt-1 block w-full border-ink/25 rounded-md bg-sage/10 text-ink/70 transition duration-150 font-bold">
+                                <input type="text" disabled value="{{ optional(auth()->user()->chantier)->name ?? 'Non assigné' }}" class="mt-1 app-input bg-sage/10 font-semibold">
                                 <input type="hidden" name="chantier_id" value="{{ auth()->user()->chantier_id }}">
                             @else
                                 <label for="chantier_id" class="block text-sm font-semibold text-ink mb-1">Chantier d'Affectation (Optionnel)</label>
-                                <select name="chantier_id" id="chantier_id" class="mt-1 app-input">
-                                    <option value="" selected>Dépôt central (Global)</option>
-                                    @foreach($chantiers as $chantier)
-                                        <option value="{{ $chantier->id }}" {{ old('chantier_id') == $chantier->id ? 'selected' : '' }}>
- {{ $chantier->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                @if($chantiers->isEmpty())
+                                    <p class="mt-1 p-3 text-sm text-ink/70 bg-sage/10 border-2 border-ink/15 rounded-md">
+                                        Aucun chantier.
+                                        <a href="{{ route('chantiers.create') }}" class="text-sage font-semibold underline">Créer un chantier</a>
+                                    </p>
+                                @else
+                                    <select name="chantier_id" id="chantier_id" class="mt-1 app-input">
+                                        <option value="" selected>Dépôt central (Global)</option>
+                                        @foreach($chantiers as $chantier)
+                                            <option value="{{ $chantier->id }}" {{ old('chantier_id') == $chantier->id ? 'selected' : '' }}>
+                                                {{ $chantier->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                @endif
                             @endif
                             @error('chantier_id')
                                 <span class="text-accent text-xs mt-1 block font-medium">{{ $message }}</span>

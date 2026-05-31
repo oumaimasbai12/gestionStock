@@ -7,7 +7,7 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="app-container">
             <!-- Contenedor principal -->
             <div class="bg-cream border-2 border-ink/15 overflow-hidden sm:rounded-lg">
                 <div class="p-6">

@@ -26,7 +26,7 @@
     </x-slot>
 
     <div class="app-page">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="app-container">
 
             @if(session('success'))
                 <div class="app-alert-success flex items-center space-x-3">

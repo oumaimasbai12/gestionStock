@@ -70,7 +70,11 @@ class StockEntryController extends Controller
 
         $chantierId = $request->chantier_id;
         if ($user->hasRole('site_manager')) {
-            // Force the entry to be assigned to the Site Manager's chantier
+            if (!$user->chantier_id) {
+                return redirect()->back()
+                    ->withErrors(['chantier_id' => 'Aucun chantier assigné à votre compte. Contactez l\'administrateur.'])
+                    ->withInput();
+            }
             $chantierId = $user->chantier_id;
         }
 

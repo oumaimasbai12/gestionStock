@@ -1,17 +1,16 @@
 <nav x-data="{ open: false }" class="bg-cream border-b-2 border-ink/15">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-mark class="block h-9 w-auto" />
-                    </a>
-                </div>
+    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
+        <div class="flex justify-between h-20">
+            <!-- Logo -->
+            <div class="shrink-0 flex items-center">
+                <a href="{{ route('dashboard') }}">
+                    <x-application-mark class="block h-9 w-auto" />
+                </a>
+            </div>
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+            <!-- Navigation Links (centered) -->
+            <div class="hidden sm:flex sm:items-center sm:justify-center sm:flex-1 sm:space-x-10 lg:space-x-12">
                     @if(auth()->user()->hasRole('admin'))
                         <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                             {{ __('Tableau de Bord') }}
@@ -25,14 +24,20 @@
                         <x-nav-link href="{{ route('products.index') }}" :active="request()->routeIs('products.index')">
                             {{ __('Produits BTP') }}
                         </x-nav-link>
-                        <x-nav-link href="{{ route('suppliers.index') }}" :active="request()->routeIs('suppliers.index')">
+                        <x-nav-link href="{{ route('suppliers.index') }}" :active="request()->routeIs('suppliers.*')">
                             {{ __('Fournisseurs') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('chantiers.index') }}" :active="request()->routeIs('chantiers.*')">
+                            {{ __('Chantiers') }}
                         </x-nav-link>
                         <x-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
                             {{ __('Entrées Stock') }}
                         </x-nav-link>
-                        <x-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.index')">
+                        <x-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.*')">
                             {{ __('Sorties Stock') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('stock-history.index') }}" :active="request()->routeIs('stock-history.*')">
+                            {{ __('Historique Stock') }}
                         </x-nav-link>
                     @elseif(auth()->user()->hasRole('storekeeper'))
                         <x-nav-link href="{{ route('products.index') }}" :active="request()->routeIs('products.index')">
@@ -41,21 +46,26 @@
                         <x-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
                             {{ __('Entrées Stock') }}
                         </x-nav-link>
-                        <x-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.index')">
+                        <x-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.*')">
                             {{ __('Sorties Stock') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('stock-history.index') }}" :active="request()->routeIs('stock-history.*')">
+                            {{ __('Historique Stock') }}
                         </x-nav-link>
                     @elseif(auth()->user()->hasRole('site_manager'))
                         <x-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
                             {{ __('Entrées Stock') }}
                         </x-nav-link>
-                        <x-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.index')">
+                        <x-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.*')">
                             {{ __('Sorties Stock') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('stock-history.index') }}" :active="request()->routeIs('stock-history.*')">
+                            {{ __('Historique Stock') }}
                         </x-nav-link>
                     @endif
                 </div>
-            </div>
 
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <div class="hidden sm:flex sm:items-center sm:ms-8">
                 @if(auth()->user()->hasRole('admin'))
                         @php $unreadCount = auth()->user()->unreadNotifications->count(); @endphp
                         <!-- Notifications -->
@@ -191,7 +201,12 @@
                         <x-slot name="trigger">
                             <span class="inline-flex rounded-md">
                                 <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-ink/70 bg-cream hover:text-ink focus:outline-none focus:bg-sage/10 active:bg-sage/10 transition ease-in-out duration-150">
-                                    {{ Auth::user()->name }}
+                                    <span class="flex flex-col items-start leading-tight">
+                                        <span>{{ Auth::user()->name }}</span>
+                                        @if(Auth::user()->hasRole('site_manager'))
+                                            <span class="text-[10px] font-semibold text-sage">{{ Auth::user()->chantier?->name ?? 'Sans chantier' }}</span>
+                                        @endif
+                                    </span>
 
                                     <svg class="ms-2 -me-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
@@ -260,14 +275,20 @@
                 <x-responsive-nav-link href="{{ route('products.index') }}" :active="request()->routeIs('products.index')">
                     {{ __('Produits BTP') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('suppliers.index') }}" :active="request()->routeIs('suppliers.index')">
+                <x-responsive-nav-link href="{{ route('suppliers.index') }}" :active="request()->routeIs('suppliers.*')">
                     {{ __('Fournisseurs') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('chantiers.index') }}" :active="request()->routeIs('chantiers.*')">
+                    {{ __('Chantiers') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
                     {{ __('Entrées Stock') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.index')">
+                <x-responsive-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.*')">
                     {{ __('Sorties Stock') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('stock-history.index') }}" :active="request()->routeIs('stock-history.*')">
+                    {{ __('Historique Stock') }}
                 </x-responsive-nav-link>
             @elseif(auth()->user()->hasRole('storekeeper'))
                 <x-responsive-nav-link href="{{ route('products.index') }}" :active="request()->routeIs('products.index')">
@@ -276,15 +297,21 @@
                 <x-responsive-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
                     {{ __('Entrées Stock') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.index')">
+                <x-responsive-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.*')">
                     {{ __('Sorties Stock') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('stock-history.index') }}" :active="request()->routeIs('stock-history.*')">
+                    {{ __('Historique Stock') }}
                 </x-responsive-nav-link>
             @elseif(auth()->user()->hasRole('site_manager'))
                 <x-responsive-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
                     {{ __('Entrées Stock') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.index')">
+                <x-responsive-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.*')">
                     {{ __('Sorties Stock') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('stock-history.index') }}" :active="request()->routeIs('stock-history.*')">
+                    {{ __('Historique Stock') }}
                 </x-responsive-nav-link>
             @endif
         </div>

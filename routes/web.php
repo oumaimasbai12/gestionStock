@@ -4,6 +4,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StockHistoryController;
 use App\Http\Controllers\StockEntryController;
 use App\Http\Controllers\StockExitController;
 use App\Http\Controllers\SupplierController;
@@ -34,6 +35,8 @@ Route::middleware([
     
     // L'dashboard principal de Business Intelligence
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/export/bi', [DashboardController::class, 'exportBiReport'])->name('dashboard.export.bi');
+    Route::get('/dashboard/export/factures', [DashboardController::class, 'exportFactures'])->name('dashboard.export.factures');
 
 });
 
@@ -72,6 +75,9 @@ Route::middleware([
     Route::get('suppliers/trash', [SupplierController::class, 'trash'])->name('suppliers.trash');
     Route::resource('suppliers', SupplierController::class);
 
+    // Chantiers (construction sites)
+    Route::resource('chantiers', App\Http\Controllers\ChantierController::class)->except(['show']);
+
     // Entries Management
     Route::get('entries/{id}/restore', [StockEntryController::class, 'restore'])->name('entries.restore');
     Route::delete('entries/{id}/force-delete', [StockEntryController::class, 'forceDelete'])->name('entries.forceDelete');
@@ -85,6 +91,8 @@ Route::middleware([
     Route::get('exits/pending', [StockExitController::class, 'pending'])->name('exits.pending');
     Route::patch('exits/{exit}/mark-paid', [StockExitController::class, 'markAsPaid'])->name('exits.mark-paid');
     Route::resource('exits', StockExitController::class);
+
+    Route::get('historique-stock', [StockHistoryController::class, 'index'])->name('stock-history.index');
 
     // Notifications
     Route::patch('notifications/{id}/read', function ($id) {

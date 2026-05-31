@@ -33,6 +33,11 @@
                             @endforeach
                         </ul>
                     </div>
+                    @if($user->hasRole('site_manager'))
+                    <div class="mb-4">
+                        <p class="text-ink"><strong>{{ __('Chantier:') }}</strong> {{ $user->chantier?->name ?? 'Non assigné' }}</p>
+                    </div>
+                    @endif
                     <div class="flex justify-start mt-4">
                         <a href="{{ route('users.index') }}" class="inline-flex items-center px-4 py-2 bg-sage/80 text-white rounded-md font-semibold hover:bg-ink/80">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">

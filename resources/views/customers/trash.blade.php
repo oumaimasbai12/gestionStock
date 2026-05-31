@@ -13,7 +13,7 @@
     </x-slot>
 
     <div class="app-page">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="app-container">
             <div class="app-card">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">

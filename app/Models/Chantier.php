@@ -15,4 +15,14 @@ class Chantier extends Model
     {
         return $this->hasMany(StockExit::class);
     }
+
+    public function entries()
+    {
+        return $this->hasMany(StockEntry::class);
+    }
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 }

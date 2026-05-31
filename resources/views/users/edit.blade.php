@@ -1,52 +1,81 @@
 <x-app-layout>
     @section('title', 'Modifier Utilisateur')
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-ink">
-            {{ __('Modifier l\'utilisateur') }}
-        </h2>
+        <div class="flex items-center justify-between">
+            <h2 class="page-title">{{ __('Modifier l\'utilisateur') }}</h2>
+            <a href="{{ route('users.index') }}" class="btn-muted">Retour</a>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Contenedor principal -->
-            <div class="bg-cream border-2 border-ink/15 overflow-hidden sm:rounded-lg">
-                <div class="p-6">
-                    <form action="{{ route('users.update', $user) }}" method="POST">
-
-                        @csrf
-                        @method('PUT')
-                        <div class="mb-4">
-                            <label for="name" class="block font-medium text-sm text-ink">{{ __('Nom') }}</label>
-                            <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required class="mt-1 block w-full border-ink/25 rounded-md focus:border-accent focus:ring-0">
-                            @error('name')
-                            <span class="text-accent text-xs">{{ $message }}</span>
-                            @enderror
+    <div class="app-page">
+        <div class="max-w-xl mx-auto sm:px-6 lg:px-8">
+            <div class="app-card p-8">
+                <form action="{{ route('users.update', $user) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    @php $currentRole = old('role', $user->roles->first()?->name); @endphp
+                    <div class="space-y-5">
+                        <div>
+                            <label for="name" class="block text-sm font-semibold text-ink mb-1">{{ __('Nom') }}</label>
+                            <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required class="app-input mt-1">
+                            @error('name')<span class="text-accent text-xs mt-1 block">{{ $message }}</span>@enderror
                         </div>
-                        <div class="mb-4">
-                            <label for="email" class="block font-medium text-sm text-ink">{{ __('Email') }}</label>
-                            <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required class="mt-1 block w-full border-ink/25 rounded-md focus:border-accent focus:ring-0">
-                            @error('email')
-                            <span class="text-accent text-xs">{{ $message }}</span>
-                            @enderror
+                        <div>
+                            <label for="email" class="block text-sm font-semibold text-ink mb-1">{{ __('Email') }}</label>
+                            <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required class="app-input mt-1">
+                            @error('email')<span class="text-accent text-xs mt-1 block">{{ $message }}</span>@enderror
                         </div>
-                        <div class="flex justify-between items-center">
-                            <a href="{{ route('users.index') }}" class="inline-flex items-center px-4 py-2 bg-sage/80 text-white rounded-md font-semibold hover:bg-ink/80">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                                </svg>
-                                {{ __('Retour') }}
-                            </a>
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-accent text-white rounded-md font-semibold hover:bg-accent/90 focus:outline-none">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V7l-4-4zM7 17h10M7 13h10M7 9h4m6 8v-8a2 2 0 00-2-2H7" />
-                                </svg>
-                                {{ __('Actualiser') }}
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                        @if(!$user->hasRole('admin'))
+                            <div>
+                                <label for="role" class="block text-sm font-semibold text-ink mb-1">{{ __('Rôle') }}</label>
+                                <select name="role" id="role" class="app-select mt-1">
+                                    @foreach($roles as $role)
+                                        @php
+                                            $label = match($role->name) {
+                                                'storekeeper' => 'Magasinier',
+                                                'site_manager' => 'Responsable de chantier',
+                                                default => ucfirst($role->name),
+                                            };
+                                        @endphp
+                                        <option value="{{ $role->name }}" {{ $currentRole === $role->name ? 'selected' : '' }}>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                                @error('role')<span class="text-accent text-xs mt-1 block">{{ $message }}</span>@enderror
+                            </div>
+                            <div id="chantier-field" class="{{ $currentRole === 'site_manager' ? '' : 'hidden' }}">
+                                <label for="chantier_id" class="block text-sm font-semibold text-ink mb-1">Chantier assigné</label>
+                                <select name="chantier_id" id="chantier_id" class="app-select mt-1">
+                                    <option value="">Sélectionner un chantier...</option>
+                                    @foreach($chantiers as $chantier)
+                                        <option value="{{ $chantier->id }}" {{ old('chantier_id', $user->chantier_id) == $chantier->id ? 'selected' : '' }}>{{ $chantier->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('chantier_id')<span class="text-accent text-xs mt-1 block">{{ $message }}</span>@enderror
+                            </div>
+                        @endif
+                    </div>
+                    <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-ink/15">
+                        <a href="{{ route('users.index') }}" class="btn-muted">Annuler</a>
+                        <button type="submit" class="btn-primary text-cream">Mettre à jour</button>
+                    </div>
+                </form>
             </div>
-            <!-- Fin contenedor principal -->
         </div>
     </div>
+
+    @if(!$user->hasRole('admin'))
+    <script>
+        document.getElementById('role')?.addEventListener('change', function () {
+            const field = document.getElementById('chantier-field');
+            const select = document.getElementById('chantier_id');
+            if (this.value === 'site_manager') {
+                field.classList.remove('hidden');
+                if (select) select.required = true;
+            } else {
+                field.classList.add('hidden');
+                if (select) { select.required = false; select.value = ''; }
+            }
+        });
+    </script>
+    @endif
 </x-app-layout>
