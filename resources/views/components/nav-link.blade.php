@@ -2,10 +2,14 @@
 
 @php
 $classes = ($active ?? false)
-            ? 'inline-flex items-center whitespace-nowrap shrink-0 px-2 lg:px-3 pt-1 border-b-2 border-accent text-xs lg:text-sm font-medium leading-5 text-ink focus:outline-none focus:border-accent transition duration-150 ease-in-out'
-            : 'inline-flex items-center whitespace-nowrap shrink-0 px-2 lg:px-3 pt-1 border-b-2 border-transparent text-xs lg:text-sm font-medium leading-5 text-ink/70 hover:text-ink hover:border-ink/25 focus:outline-none focus:text-ink focus:border-ink/25 transition duration-150 ease-in-out';
+    ? 'flex items-center w-full min-w-0 px-3 py-2.5 rounded-md text-sm font-semibold text-cream bg-accent transition-colors'
+    : 'flex items-center w-full min-w-0 px-3 py-2.5 rounded-md text-sm font-medium text-ink/80 hover:bg-accent/10 hover:text-ink transition-colors';
 @endphp
 
-<a {{ $attributes->merge(['class' => $classes]) }}>
+<a
+    {{ $attributes->merge(['class' => $classes]) }}
+    wire:navigate
+    wire:navigate.hover
+>
     {{ $slot }}
 </a>

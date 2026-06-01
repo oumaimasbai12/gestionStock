@@ -7,6 +7,10 @@
 }
 
 @layer base {
+    :root {
+        --livewire-progress-bar-color: #c9996b;
+    }
+
     body {
         @apply bg-cream text-ink antialiased;
     }
@@ -23,16 +27,105 @@
         @apply min-h-screen bg-cream text-ink;
     }
 
+    .app-layout {
+        @apply min-h-dvh bg-cream text-ink overflow-x-hidden;
+    }
+
+    .app-sidebar {
+        @apply fixed inset-y-0 left-0 z-40 flex w-64 flex-col h-dvh border-r-2 border-ink/15 bg-cream transition-transform duration-200 ease-in-out;
+    }
+
+    .app-sidebar-overlay {
+        @apply fixed inset-0 z-30 bg-ink/50 lg:hidden;
+    }
+
+    .app-main {
+        @apply min-h-dvh w-full min-w-0 box-border lg:pl-64;
+    }
+
+    .page-transition-overlay {
+        @apply pointer-events-none fixed z-[60] bg-cream opacity-0 ease-in-out;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        transition: opacity 300ms ease-in-out;
+    }
+
+    @screen lg {
+        .page-transition-overlay {
+            left: 16rem;
+        }
+    }
+
+    .page-transition-overlay.is-visible {
+        @apply opacity-100;
+    }
+
+    .app-page-content.page-is-entering {
+        animation: page-content-in 300ms ease-out forwards;
+    }
+
+    @keyframes page-content-in {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Livewire navigate progress bar (accent) */
+    #nprogress .bar {
+        background: var(--livewire-progress-bar-color, #c9996b) !important;
+        height: 3px !important;
+    }
+
+    #nprogress .peg {
+        box-shadow: 0 0 10px #c9996b, 0 0 5px #c9996b !important;
+    }
+
+    .app-mobile-bar {
+        @apply sticky top-0 z-20 flex h-14 shrink-0 items-center gap-3 border-b-2 border-ink/15 bg-cream px-4 lg:hidden;
+    }
+
+    .app-brand-bar {
+        @apply flex h-[5.5rem] shrink-0 items-center border-b-2 border-ink/15 px-4;
+    }
+
+    .app-page-header {
+        @apply flex min-h-[5.5rem] w-full items-center bg-cream border-b-2 border-ink/15 px-4 sm:px-6 lg:px-8;
+    }
+
+    .page-header-inner {
+        @apply w-full min-w-0;
+    }
+
+    /* Title + actions row on all pages */
+    .page-header-inner > .flex {
+        @apply w-full flex-wrap items-center justify-between gap-x-8 gap-y-4;
+    }
+
+    .page-header-inner > .flex > :first-child {
+        @apply min-w-0 flex-1;
+    }
+
+    .page-header-inner > .flex > :last-child {
+        @apply shrink-0;
+    }
+
     .app-header {
-        @apply bg-cream border-b-2 border-ink/15;
+        @apply bg-cream;
     }
 
     .app-page {
-        @apply py-10;
+        @apply py-6;
     }
 
     .app-container {
-        @apply max-w-7xl mx-auto sm:px-6 lg:px-8;
+        @apply w-full max-w-none px-4 sm:px-6 lg:px-8;
     }
 
     .app-card {

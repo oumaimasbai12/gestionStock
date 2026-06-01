@@ -1,385 +1,146 @@
-<nav x-data="{ open: false }" class="bg-cream border-b-2 border-ink/15">
-    <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
-        <div class="flex justify-between h-20">
-            <!-- Logo -->
-            <div class="shrink-0 flex items-center">
-                <a href="{{ route('dashboard') }}">
-                    <x-application-mark class="block h-9 w-auto" />
-                </a>
-            </div>
+<div>
+    <!-- Mobile overlay -->
+    <div
+        x-show="sidebarOpen"
+        x-transition:enter="transition-opacity ease-out duration-200"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition-opacity ease-in duration-150"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        @click="sidebarOpen = false"
+        class="app-sidebar-overlay"
+        x-cloak
+    ></div>
 
-            <!-- Navigation Links (centered) -->
-            <div class="hidden sm:flex sm:items-center sm:justify-center sm:flex-1 sm:space-x-10 lg:space-x-12">
-                    @if(auth()->user()->hasRole('admin'))
-                        <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-                            {{ __('Tableau de Bord') }}
-                        </x-nav-link>
-                        <x-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')">
-                            {{ __('Utilisateurs') }}
-                        </x-nav-link>
-                        <x-nav-link href="{{ route('customers.index') }}" :active="request()->routeIs('customers.index')">
-                            {{ __('Clients') }}
-                        </x-nav-link>
-                        <x-nav-link href="{{ route('products.index') }}" :active="request()->routeIs('products.index')">
-                            {{ __('Produits BTP') }}
-                        </x-nav-link>
-                        <x-nav-link href="{{ route('suppliers.index') }}" :active="request()->routeIs('suppliers.*')">
-                            {{ __('Fournisseurs') }}
-                        </x-nav-link>
-                        <x-nav-link href="{{ route('chantiers.index') }}" :active="request()->routeIs('chantiers.*')">
-                            {{ __('Chantiers') }}
-                        </x-nav-link>
-                        <x-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
-                            {{ __('Entrées Stock') }}
-                        </x-nav-link>
-                        <x-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.*')">
-                            {{ __('Sorties Stock') }}
-                        </x-nav-link>
-                        <x-nav-link href="{{ route('stock-history.index') }}" :active="request()->routeIs('stock-history.*')">
-                            {{ __('Historique Stock') }}
-                        </x-nav-link>
-                    @elseif(auth()->user()->hasRole('storekeeper'))
-                        <x-nav-link href="{{ route('products.index') }}" :active="request()->routeIs('products.index')">
-                            {{ __('Produits BTP') }}
-                        </x-nav-link>
-                        <x-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
-                            {{ __('Entrées Stock') }}
-                        </x-nav-link>
-                        <x-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.*')">
-                            {{ __('Sorties Stock') }}
-                        </x-nav-link>
-                        <x-nav-link href="{{ route('stock-history.index') }}" :active="request()->routeIs('stock-history.*')">
-                            {{ __('Historique Stock') }}
-                        </x-nav-link>
-                    @elseif(auth()->user()->hasRole('site_manager'))
-                        <x-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
-                            {{ __('Entrées Stock') }}
-                        </x-nav-link>
-                        <x-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.*')">
-                            {{ __('Sorties Stock') }}
-                        </x-nav-link>
-                        <x-nav-link href="{{ route('stock-history.index') }}" :active="request()->routeIs('stock-history.*')">
-                            {{ __('Historique Stock') }}
-                        </x-nav-link>
-                    @endif
-                </div>
+    <!-- Sidebar -->
+    <aside
+        class="app-sidebar fixed inset-y-0 left-0 z-40 flex h-dvh w-64 flex-col bg-cream"
+        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+    >
+        <!-- Logo -->
+        <div class="app-brand-bar">
+            <a href="{{ auth()->user()->hasRole('admin') ? route('dashboard') : route('entries.index') }}" wire:navigate wire:navigate.hover @click="sidebarOpen = false" class="flex items-center gap-3">
+                <x-application-mark class="h-9 w-auto" />
+                <span class="font-bold text-ink text-lg leading-tight">Stocket</span>
+            </a>
+        </div>
 
-            <div class="hidden sm:flex sm:items-center sm:ms-8">
-                @if(auth()->user()->hasRole('admin'))
-                        @php $unreadCount = auth()->user()->unreadNotifications->count(); @endphp
-                        <!-- Notifications -->
-                        <div class="ms-3 relative" x-data="{ open: false }">
-                            <button
-                                type="button"
-                                @click="open = !open"
-                                class="relative inline-flex items-center justify-center w-10 h-10 rounded-md border-2 border-ink/15 text-ink/70 hover:text-ink hover:border-ink/30 hover:bg-ink/5 focus:outline-none transition"
-                                aria-label="Notifications{{ $unreadCount > 0 ? ' ('.$unreadCount.' non lues)' : '' }}"
-                            >
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                                </svg>
-                                @if($unreadCount > 0)
-                                    <span class="app-notify-badge absolute -top-1 -right-1">
-                                        {{ $unreadCount > 99 ? '99+' : $unreadCount }}
-                                    </span>
-                                @endif
-                            </button>
+        <!-- Nav links -->
+        <nav class="flex-1 overflow-y-auto px-2 py-4 space-y-0.5" @click="if ($event.target.closest('a')) sidebarOpen = false">
+            @include('layouts.partials.sidebar-links')
+        </nav>
 
-                            <div x-show="open" @click.away="open = false" x-cloak class="origin-top-right absolute right-0 mt-2 w-80 rounded-md bg-cream border-2 border-ink/15 z-50">
-                                <div class="p-3 border-b-2 border-ink/15 flex items-center justify-between gap-3">
-                                    <div class="flex items-center gap-2 min-w-0">
-                                        <span class="text-xs font-bold text-ink uppercase tracking-wider">Notifications</span>
-                                        @if($unreadCount > 0)
-                                            <span class="app-notify-badge">
-                                                {{ $unreadCount > 99 ? '99+' : $unreadCount }}
-                                            </span>
-                                        @endif
-                                    </div>
-                                    @if($unreadCount > 0)
-                                        <form action="{{ route('notifications.read-all') }}" method="POST" class="shrink-0">
-                                            @csrf
-                                            <button type="submit" class="text-xs font-semibold text-sage hover:text-sage/80 whitespace-nowrap">Tout marquer lu</button>
-                                        </form>
-                                    @endif
-                                </div>
-                                <div class="max-h-80 overflow-y-auto">
-                                    @forelse(auth()->user()->notifications->take(10) as $notification)
-                                        @php $data = $notification->data; @endphp
-                                        <a href="{{ $data['url'] ?? '#' }}" 
-                                           @click="
-                                               @if(!$notification->read_at)
-                                                   fetch('{{ route('notifications.read', $notification->id) }}', {method: 'PATCH', headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'}})
-                                               @endif
-                                               open = false
-                                           "
-                                           class="flex items-start gap-3 px-4 py-3 hover:bg-sage/10 transition border-b border-ink/10 last:border-0 {{ $notification->read_at ? 'opacity-60' : 'bg-accent/10' }}">
-                                            <div class="shrink-0 mt-0.5">
-                                                @if(($data['type'] ?? '') === 'overdue_invoice')
-                                                    <div class="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center">
-                                                        <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                                    </div>
-                                                @else
-                                                    <div class="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center">
-                                                        <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                            <div class="min-w-0 flex-1">
-                                                <div class="text-xs font-bold text-ink">{{ $data['title'] ?? '' }}</div>
-                                                <div class="text-xs text-ink/70 mt-0.5">{{ $data['message'] ?? '' }}</div>
-                                                <div class="text-[10px] text-ink/50 mt-1">{{ $notification->created_at->diffForHumans() }}</div>
-                                            </div>
-                                        </a>
-                                    @empty
-                                        <div class="text-center py-8 text-ink/50 text-sm">Aucune notification</div>
-                                    @endforelse
-                                </div>
-                                @if(auth()->user()->notifications->count() > 10)
-                                    <div class="border-t border-ink/15 p-2 text-center">
-                                        <span class="text-xs text-ink/50">+ {{ auth()->user()->notifications->count() - 10 }} autres</span>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    @endif
-                <!-- Teams Dropdown -->
-                @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
-                    <div class="ms-3 relative">
-                        <x-dropdown align="right" width="60">
-                            <x-slot name="trigger">
-                                <span class="inline-flex rounded-md">
-                                    <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-ink/70 bg-cream hover:text-ink focus:outline-none focus:bg-sage/10 active:bg-sage/10 transition ease-in-out duration-150">
-                                        {{ Auth::user()->currentTeam->name }}
-
-                                        <svg class="ms-2 -me-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    </button>
-                                </span>
-                            </x-slot>
-
-                            <x-slot name="content">
-                                <div class="w-60">
-                                    <!-- Team Management -->
-                                    <div class="block px-4 py-2 text-xs text-ink/50">
-                                        {{ __('Manage Team') }}
-                                    </div>
-
-                                    <!-- Team Settings -->
-                                    <x-dropdown-link href="{{ route('teams.show', Auth::user()->currentTeam->id) }}">
-                                        {{ __('Team Settings') }}
-                                    </x-dropdown-link>
-
-                                    @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
-                                        <x-dropdown-link href="{{ route('teams.create') }}">
-                                            {{ __('Create New Team') }}
-                                        </x-dropdown-link>
-                                    @endcan
-
-                                    <!-- Team Switcher -->
-                                    @if (Auth::user()->allTeams()->count() > 1)
-                                        <div class="border-t border-ink/20"></div>
-
-                                        <div class="block px-4 py-2 text-xs text-ink/50">
-                                            {{ __('Switch Teams') }}
-                                        </div>
-
-                                        @foreach (Auth::user()->allTeams() as $team)
-                                            <x-switchable-team :team="$team" />
-                                        @endforeach
-                                    @endif
-                                </div>
-                            </x-slot>
-                        </x-dropdown>
-                    </div>
-                @endif
-
-                <!-- Settings Dropdown -->
-                <div class="ms-3 relative">
-                    <x-dropdown align="right" width="48">
-                        <x-slot name="trigger">
-                            <span class="inline-flex rounded-md">
-                                <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-ink/70 bg-cream hover:text-ink focus:outline-none focus:bg-sage/10 active:bg-sage/10 transition ease-in-out duration-150">
-                                    <span class="flex flex-col items-start leading-tight">
-                                        <span>{{ Auth::user()->name }}</span>
-                                        @if(Auth::user()->hasRole('site_manager'))
-                                            <span class="text-[10px] font-semibold text-sage">{{ Auth::user()->chantier?->name ?? 'Sans chantier' }}</span>
-                                        @endif
-                                    </span>
-
-                                    <svg class="ms-2 -me-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                    </svg>
-                                </button>
-                            </span>
-                        </x-slot>
-
-                        <x-slot name="content">
-                            <!-- Account Management -->
-                            <div class="block px-4 py-2 text-xs text-ink/50">
-                                {{ __('Manage Account') }}
-                            </div>
-
-                            <x-dropdown-link href="{{ route('profile.show') }}">
-                                {{ __('Profile') }}
-                            </x-dropdown-link>
-
-                            @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
-                                <x-dropdown-link href="{{ route('api-tokens.index') }}">
-                                    {{ __('API Tokens') }}
-                                </x-dropdown-link>
+        <!-- Footer: notifications + user -->
+        <div class="shrink-0 border-t-2 border-ink/15 p-3 space-y-2">
+            @if(auth()->user()->hasRole('admin'))
+                @php $unreadCount = auth()->user()->unreadNotifications->count(); @endphp
+                <div class="relative" x-data="{ notifOpen: false }">
+                    <button
+                        type="button"
+                        @click="notifOpen = !notifOpen"
+                        class="flex w-full items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-ink/80 hover:bg-ink/5 hover:text-ink transition"
+                    >
+                        <span class="relative inline-flex">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                            </svg>
+                            @if($unreadCount > 0)
+                                <span class="app-notify-badge absolute -top-1 -right-1">{{ $unreadCount > 99 ? '99+' : $unreadCount }}</span>
                             @endif
-
-                            <div class="border-t border-ink/20"></div>
-
-                            <!-- Authentication -->
-                            <form method="POST" action="{{ route('logout') }}" x-data>
-                                @csrf
-
-                                <x-dropdown-link href="{{ route('logout') }}"
-                                         @click.prevent="$root.submit();">
-                                    {{ __('Log Out') }}
-                                </x-dropdown-link>
-                            </form>
-                        </x-slot>
-                    </x-dropdown>
+                        </span>
+                        <span>Notifications</span>
+                    </button>
+                    <div
+                        x-show="notifOpen"
+                        @click.away="notifOpen = false"
+                        x-cloak
+                        class="absolute bottom-full left-0 right-0 mb-2 mx-1 rounded-md bg-cream border-2 border-ink/15 z-50 max-h-72 overflow-hidden flex flex-col"
+                    >
+                        <div class="p-3 border-b-2 border-ink/15 flex items-center justify-between gap-2">
+                            <span class="text-xs font-bold text-ink uppercase">Notifications</span>
+                            @if($unreadCount > 0)
+                                <form action="{{ route('notifications.read-all') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="text-xs font-semibold text-accent">Tout lu</button>
+                                </form>
+                            @endif
+                        </div>
+                        <div class="overflow-y-auto flex-1">
+                            @forelse(auth()->user()->notifications->take(8) as $notification)
+                                @php $data = $notification->data; @endphp
+                                <a href="{{ $data['url'] ?? '#' }}" class="block px-3 py-2.5 text-xs border-b border-ink/10 hover:bg-accent/10 {{ $notification->read_at ? 'opacity-60' : 'bg-accent/15' }}">
+                                    <div class="font-bold text-ink">{{ $data['title'] ?? '' }}</div>
+                                    <div class="text-ink/70 mt-0.5 line-clamp-2">{{ $data['message'] ?? '' }}</div>
+                                </a>
+                            @empty
+                                <p class="p-4 text-center text-ink/50 text-xs">Aucune notification</p>
+                            @endforelse
+                        </div>
+                    </div>
                 </div>
-            </div>
+            @endif
 
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-ink/50 hover:text-ink/70 hover:bg-ink/5 focus:outline-none focus:bg-ink/5 focus:text-ink/70 transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            <div class="relative" x-data="{ userOpen: false }">
+                <button
+                    type="button"
+                    @click="userOpen = !userOpen"
+                    class="flex w-full items-center gap-3 px-3 py-2.5 rounded-md text-sm hover:bg-ink/5 transition text-left"
+                >
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent/25 text-ink font-bold text-sm">
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    </span>
+                    <span class="min-w-0 flex-1">
+                        <span class="block text-sm font-semibold text-ink truncate leading-tight">{{ Auth::user()->name }}</span>
+                        @if(Auth::user()->hasRole('site_manager'))
+                            <span class="block text-xs font-medium text-ink/75 truncate mt-0.5">{{ Auth::user()->chantier?->name ?? 'Sans chantier' }}</span>
+                        @else
+                            <span class="block text-xs font-medium text-ink/75 truncate mt-0.5">{{ Auth::user()->email }}</span>
+                        @endif
+                    </span>
+                    <svg class="w-4 h-4 shrink-0 text-ink/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                     </svg>
                 </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            @if(auth()->user()->hasRole('admin'))
-                <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-                    {{ __('Tableau de Bord') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')">
-                    {{ __('Utilisateurs') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('customers.index') }}" :active="request()->routeIs('customers.index')">
-                    {{ __('Clients') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('products.index') }}" :active="request()->routeIs('products.index')">
-                    {{ __('Produits BTP') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('suppliers.index') }}" :active="request()->routeIs('suppliers.*')">
-                    {{ __('Fournisseurs') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('chantiers.index') }}" :active="request()->routeIs('chantiers.*')">
-                    {{ __('Chantiers') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
-                    {{ __('Entrées Stock') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.*')">
-                    {{ __('Sorties Stock') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('stock-history.index') }}" :active="request()->routeIs('stock-history.*')">
-                    {{ __('Historique Stock') }}
-                </x-responsive-nav-link>
-            @elseif(auth()->user()->hasRole('storekeeper'))
-                <x-responsive-nav-link href="{{ route('products.index') }}" :active="request()->routeIs('products.index')">
-                    {{ __('Produits BTP') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
-                    {{ __('Entrées Stock') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.*')">
-                    {{ __('Sorties Stock') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('stock-history.index') }}" :active="request()->routeIs('stock-history.*')">
-                    {{ __('Historique Stock') }}
-                </x-responsive-nav-link>
-            @elseif(auth()->user()->hasRole('site_manager'))
-                <x-responsive-nav-link href="{{ route('entries.index') }}" :active="request()->routeIs('entries.index')">
-                    {{ __('Entrées Stock') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('exits.index') }}" :active="request()->routeIs('exits.*')">
-                    {{ __('Sorties Stock') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('stock-history.index') }}" :active="request()->routeIs('stock-history.*')">
-                    {{ __('Historique Stock') }}
-                </x-responsive-nav-link>
-            @endif
-        </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-ink/20">
-            <div class="flex items-center px-4">
-                <div>
-                    <div class="font-medium text-base text-ink">{{ Auth::user()->name }}</div>
-                    <div class="font-medium text-sm text-ink/70">{{ Auth::user()->email }}</div>
+                <div
+                    x-show="userOpen"
+                    @click.away="userOpen = false"
+                    x-cloak
+                    class="absolute bottom-full left-0 right-0 mb-1 mx-1 py-1 rounded-md bg-cream border-2 border-ink/15 z-50"
+                >
+                    <x-dropdown-link href="{{ route('profile.show') }}">{{ __('Profile') }}</x-dropdown-link>
+                    @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
+                        <x-dropdown-link href="{{ route('api-tokens.index') }}">{{ __('API Tokens') }}</x-dropdown-link>
+                    @endif
+                    <form method="POST" action="{{ route('logout') }}" x-data>
+                        @csrf
+                        <x-dropdown-link href="{{ route('logout') }}" data-no-navigate @click.prevent="$root.submit();">
+                            {{ __('Log Out') }}
+                        </x-dropdown-link>
+                    </form>
                 </div>
             </div>
-
-            <div class="mt-3 space-y-1">
-                <!-- Account Management -->
-                <x-responsive-nav-link href="{{ route('profile.show') }}" :active="request()->routeIs('profile.show')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
-                    <x-responsive-nav-link href="{{ route('api-tokens.index') }}" :active="request()->routeIs('api-tokens.index')">
-                        {{ __('API Tokens') }}
-                    </x-responsive-nav-link>
-                @endif
-
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}" x-data>
-                    @csrf
-
-                    <x-responsive-nav-link href="{{ route('logout') }}"
-                                   @click.prevent="$root.submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </form>
-
-                <!-- Team Management -->
-                @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
-                    <div class="border-t border-ink/20"></div>
-
-                    <div class="block px-4 py-2 text-xs text-ink/50">
-                        {{ __('Manage Team') }}
-                    </div>
-
-                    <!-- Team Settings -->
-                    <x-responsive-nav-link href="{{ route('teams.show', Auth::user()->currentTeam->id) }}" :active="request()->routeIs('teams.show')">
-                        {{ __('Team Settings') }}
-                    </x-responsive-nav-link>
-
-                    @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
-                        <x-responsive-nav-link href="{{ route('teams.create') }}" :active="request()->routeIs('teams.create')">
-                            {{ __('Create New Team') }}
-                        </x-responsive-nav-link>
-                    @endcan
-
-                    <!-- Team Switcher -->
-                    @if (Auth::user()->allTeams()->count() > 1)
-                        <div class="border-t border-ink/20"></div>
-
-                        <div class="block px-4 py-2 text-xs text-ink/50">
-                            {{ __('Switch Teams') }}
-                        </div>
-
-                        @foreach (Auth::user()->allTeams() as $team)
-                            <x-switchable-team :team="$team" component="responsive-nav-link" />
-                        @endforeach
-                    @endif
-                @endif
-            </div>
         </div>
-    </div>
-</nav>
+    </aside>
+
+    <!-- Mobile top bar -->
+    <header class="app-mobile-bar">
+        <button
+            type="button"
+            @click="sidebarOpen = !sidebarOpen"
+            class="inline-flex items-center justify-center w-10 h-10 rounded-md border-2 border-ink/15 text-ink hover:bg-ink/5"
+            aria-label="Menu"
+        >
+            <svg x-show="!sidebarOpen" class="w-5 h-5" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            <svg x-show="sidebarOpen" x-cloak class="w-5 h-5" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+        <a href="{{ auth()->user()->hasRole('admin') ? route('dashboard') : route('entries.index') }}" wire:navigate class="flex items-center gap-2">
+            <x-application-mark class="h-8 w-auto" />
+            <span class="font-bold text-ink">Stocket</span>
+        </a>
+    </header>
+</div>
