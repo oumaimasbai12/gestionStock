@@ -25,11 +25,12 @@ function shouldAutoNavigate(link) {
 
     const href = link.getAttribute('href') ?? '';
     if (!href || href.startsWith('#') || href.startsWith('javascript:')) return false;
-    if (/\/logout|\.(pdf|csv|zip|xlsx?)(\?|$)/i.test(href)) return false;
+    if (/\/logout|\/export\/|\.(pdf|csv|zip|xlsx?)(\?|$)/i.test(href)) return false;
 
     try {
         const url = new URL(link.href, window.location.origin);
         if (url.origin !== window.location.origin) return false;
+        if (url.pathname.includes('/export/')) return false;
     } catch {
         return false;
     }

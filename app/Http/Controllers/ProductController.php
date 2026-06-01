@@ -70,7 +70,11 @@ class ProductController extends Controller
 
         fclose($handle);
 
-        return redirect()->route('products.index')->with('success', "Mabrouk! T-importaw {$count} produits dyal l'BTP b'najah! 🚀🏗️");
+        $message = $count === 1
+            ? 'Import réussi : 1 produit BTP a été importé.'
+            : "Import réussi : {$count} produits BTP ont été importés.";
+
+        return redirect()->route('products.index')->with('success', $message);
     }
 
     /**

@@ -5,6 +5,11 @@
             <x-authentication-card-logo />
         </x-slot>
 
+        <div class="mb-6 text-center">
+            <h1 class="text-lg font-semibold text-ink">Connexion</h1>
+            <p class="text-sm text-ink/70 mt-1">Accédez à votre espace Stocket</p>
+        </div>
+
         <x-validation-errors class="mb-4" />
 
         @if (session('status'))
@@ -17,18 +22,25 @@
             @csrf
 
             <div>
-                <x-label for="email" value="{{ __('Email') }}" />
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+                <x-label for="email" value="Adresse e-mail" />
+                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" placeholder="nom@exemple.com" />
             </div>
 
             <div class="mt-4">
-                <x-label for="password" value="{{ __('Password') }}" />
-                <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="current-password" />
+                <x-label for="password" value="Mot de passe" />
+                <x-password-input
+                    id="password"
+                    class="block mt-1 w-full"
+                    name="password"
+                    required
+                    autocomplete="current-password"
+                    placeholder="••••••••"
+                />
             </div>
 
-            <div class="flex items-center justify-end mt-4">
+            <div class="flex items-center justify-end mt-6">
                 <x-button>
-                    {{ __('Log in') }}
+                    Se connecter
                 </x-button>
             </div>
         </form>
